@@ -1,0 +1,41 @@
+Copyright 2024-2025 The Trivalent Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is
+distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.
+---
+diff --git a/extensions/common/extension_builder.cc b/extensions/common/extension_builder.cc
+index 8c31eb5ac2..d600090ad6 100644
+--- a/extensions/common/extension_builder.cc
++++ b/extensions/common/extension_builder.cc
+@@ -78,9 +78,9 @@ struct ExtensionBuilder::ManifestData {
+     bool separate_host_permissions = effective_manifest_version >= 3;
+     for (const auto& permission : host_permissions) {
+       if (separate_host_permissions) {
+-        host_permissions_value.Append(permission);
++        optional_host_permissions_value.Append(permission);
+       } else {
+-        permissions_value.Append(permission);
++        optional_permissions_value.Append(permission);
+       }
+     }
+     for (const auto& permission : optional_host_permissions) {
+diff --git a/extensions/common/extension_features.cc b/extensions/common/extension_features.cc
+index 1fb96ff9a0..0411253928 100644
+--- a/extensions/common/extension_features.cc
++++ b/extensions/common/extension_features.cc
+@@ -121,7 +121,7 @@ BASE_FEATURE(kExtensionsManifestV3Only,
+ 
+ BASE_FEATURE(kExtensionsMenuAccessControl,
+              "ExtensionsMenuAccessControl",
+-             base::FEATURE_DISABLED_BY_DEFAULT);
++             base::FEATURE_ENABLED_BY_DEFAULT);
+ 
+ BASE_FEATURE(kExtensionsMenuAccessControlWithPermittedSites,
+              "ExtensionsMenuAccessControlWithPermittedSitesName",
