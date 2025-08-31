@@ -29,7 +29,7 @@ diff --git a/extensions/common/url_pattern.cc b/extensions/common/url_pattern.cc
 index d18c6f843b..955d9d675b 100644
 --- a/extensions/common/url_pattern.cc
 +++ b/extensions/common/url_pattern.cc
-@@ -205,8 +205,9 @@ URLPattern::ParseResult URLPattern::Parse(std::string_view pattern) {
+@@ -205,8 +205,7 @@ URLPattern::ParseResult URLPattern::Parse(std::string_view pattern) {
  
    // Special case pattern to match every valid URL.
    if (pattern == kAllUrlsPattern) {
