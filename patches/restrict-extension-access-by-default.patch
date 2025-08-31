@@ -10,22 +10,21 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
-diff --git a/extensions/common/extension_builder.cc b/extensions/common/extension_builder.cc
-index 8c31eb5ac2..d600090ad6 100644
---- a/extensions/common/extension_builder.cc
-+++ b/extensions/common/extension_builder.cc
-@@ -78,9 +78,9 @@ struct ExtensionBuilder::ManifestData {
-     bool separate_host_permissions = effective_manifest_version >= 3;
-     for (const auto& permission : host_permissions) {
-       if (separate_host_permissions) {
--        host_permissions_value.Append(permission);
-+        optional_host_permissions_value.Append(permission);
-       } else {
--        permissions_value.Append(permission);
-+        optional_permissions_value.Append(permission);
-       }
+diff --git a/extensions/common/manifest_handlers/permissions_parser.cc b/extensions/common/manifest_handlers/permissions_parser.cc
+index e4bb829059..ea8ce25399 100644
+--- a/extensions/common/manifest_handlers/permissions_parser.cc
++++ b/extensions/common/manifest_handlers/permissions_parser.cc
+@@ -427,8 +427,8 @@ bool PermissionsParser::Parse(Extension* extension, std::u16string* error) {
+   if (extension->manifest_version() >= 3) {
+     std::vector<std::string> manifest_hosts;
+     std::vector<std::string> manifest_optional_hosts;
+-    if (!ParseHostsFromJSON(extension, keys::kHostPermissions, &manifest_hosts,
+-                            error)) {
++    if (!ParseHostsFromJSON(extension, keys::kHostPermissions,
++                            &manifest_optional_hosts, error)) {
+       return false;
      }
-     for (const auto& permission : optional_host_permissions) {
+ 
 diff --git a/extensions/common/extension_features.cc b/extensions/common/extension_features.cc
 index 1fb96ff9a0..0411253928 100644
 --- a/extensions/common/extension_features.cc
