@@ -25,17 +25,6 @@ index e4bb829059..31e1642347 100644
        return false;
      }
  
-@@ -438,10 +438,6 @@ bool PermissionsParser::Parse(Extension* extension, std::u16string* error) {
-     }
- 
-     // TODO(kelvinjiang): Remove the dependency for |api_permissions| here.
--    ParseHostPermissions(extension, keys::kHostPermissions, manifest_hosts,
--                         initial_required_permissions_->api_permissions,
--                         &initial_required_permissions_->host_permissions);
--
-     ParseHostPermissions(extension, keys::kOptionalHostPermissions,
-                          manifest_optional_hosts,
-                          initial_optional_permissions_->api_permissions,
 diff --git a/extensions/common/url_pattern.cc b/extensions/common/url_pattern.cc
 index d18c6f843b..955d9d675b 100644
 --- a/extensions/common/url_pattern.cc
@@ -46,8 +35,6 @@ index d18c6f843b..955d9d675b 100644
    if (pattern == kAllUrlsPattern) {
 -    SetMatchAllURLs(true);
 -    return ParseResult::kSuccess;
-+    // We don't extension access to all sites
-+    SetMatchAllURLs(false);
 +    return ParseResult::kInvalidHost;
    }
  
