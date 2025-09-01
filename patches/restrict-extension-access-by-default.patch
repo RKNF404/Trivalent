@@ -11,10 +11,20 @@ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, e
 See the License for the specific language governing permissions and limitations under the License.
 ---
 diff --git a/extensions/common/manifest_handlers/permissions_parser.cc b/extensions/common/manifest_handlers/permissions_parser.cc
-index e4bb829059..31e1642347 100644
+index e4bb829059..72b45f2a0f 100644
 --- a/extensions/common/manifest_handlers/permissions_parser.cc
 +++ b/extensions/common/manifest_handlers/permissions_parser.cc
-@@ -427,8 +427,8 @@ bool PermissionsParser::Parse(Extension* extension, std::u16string* error) {
+@@ -107,7 +107,8 @@ bool ParseHostsFromJSON(Extension* extension,
+   const base::Value::List& list = permissions->GetList();
+   for (size_t i = 0; i < list.size(); ++i) {
+     if (list[i].is_string()) {
+-      hosts->push_back(list[i].GetString());
++      if (list[i].GetString() != URLPattern::kAllUrlsPattern)
++        hosts->push_back(list[i].GetString());
+     } else {
+       *error = ErrorUtils::FormatErrorMessageUTF16(
+           errors::kInvalidHostPermission, key, base::NumberToString(i));
+@@ -427,8 +428,8 @@ bool PermissionsParser::Parse(Extension* extension, std::u16string* error) {
    if (extension->manifest_version() >= 3) {
      std::vector<std::string> manifest_hosts;
      std::vector<std::string> manifest_optional_hosts;
@@ -25,17 +35,14 @@ index e4bb829059..31e1642347 100644
        return false;
      }
  
-diff --git a/extensions/common/url_pattern.cc b/extensions/common/url_pattern.cc
-index d18c6f843b..955d9d675b 100644
---- a/extensions/common/url_pattern.cc
-+++ b/extensions/common/url_pattern.cc
-@@ -205,8 +205,7 @@ URLPattern::ParseResult URLPattern::Parse(std::string_view pattern) {
+@@ -438,10 +439,6 @@ bool PermissionsParser::Parse(Extension* extension, std::u16string* error) {
+     }
  
-   // Special case pattern to match every valid URL.
-   if (pattern == kAllUrlsPattern) {
--    SetMatchAllURLs(true);
--    return ParseResult::kSuccess;
-+    return ParseResult::kInvalidHost;
-   }
- 
-   // Parse out the scheme.
+     // TODO(kelvinjiang): Remove the dependency for |api_permissions| here.
+-    ParseHostPermissions(extension, keys::kHostPermissions, manifest_hosts,
+-                         initial_required_permissions_->api_permissions,
+-                         &initial_required_permissions_->host_permissions);
+-
+     ParseHostPermissions(extension, keys::kOptionalHostPermissions,
+                          manifest_optional_hosts,
+                          initial_optional_permissions_->api_permissions,
