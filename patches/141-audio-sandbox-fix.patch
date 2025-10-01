@@ -18,7 +18,7 @@ index 3c24c69d02134..ca2b3b4d746e8 100644
  #include "sandbox/policy/linux/bpf_audio_policy_linux.h"
  
  #include <sys/socket.h>
-+#include <sys/mman.h>
++#include "sandbox/linux/system_headers/linux_memfd.h"
  
  #include "sandbox/linux/bpf_dsl/bpf_dsl.h"
  #include "sandbox/linux/seccomp-bpf-helpers/sigsys_handlers.h"
