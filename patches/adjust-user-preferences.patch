@@ -10,11 +10,23 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
+diff --git a/chrome/browser/ui/tabs/features.cc b/chrome/browser/ui/tabs/features.cc
+index 33f2e64c64..b4762ba94d 100644
+--- a/chrome/browser/ui/tabs/features.cc
++++ b/chrome/browser/ui/tabs/features.cc
+@@ -39,7 +39,7 @@ BASE_FEATURE(kTabGroupHome, base::FEATURE_DISABLED_BY_DEFAULT);
+
+ BASE_FEATURE(kTabSearchPositionSetting, base::FEATURE_DISABLED_BY_DEFAULT);
+
+-BASE_FEATURE(kVerticalTabs, base::FEATURE_DISABLED_BY_DEFAULT);
++BASE_FEATURE(kVerticalTabs, base::FEATURE_ENABLED_BY_DEFAULT);
+
+ BASE_FEATURE(kTabSelectionByPointer, base::FEATURE_DISABLED_BY_DEFAULT);
 diff --git a/chrome/browser/extensions/api/settings_private/prefs_util.cc b/chrome/browser/extensions/api/settings_private/prefs_util.cc
 index ab19b6cb94e9d..b9f99abf97a1c 100644
 --- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
 +++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-@@ -182,6 +182,22 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
+@@ -182,6 +182,24 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
    }
    s_allowlist = new PrefsUtil::TypedPrefMap();
  
@@ -28,6 +40,8 @@ index ab19b6cb94e9d..b9f99abf97a1c 100644
 +  (*s_allowlist)[::prefs::kWebKitForceDarkModeEnabled] =
 +      settings_api::PrefType::kBoolean;
 +  (*s_allowlist)[::prefs::kDisableExtensions] =
++      settings_api::PrefType::kBoolean;
++  (*s_allowlist)[::prefs::kVerticalTabs] =
 +      settings_api::PrefType::kBoolean;
 +  (*s_allowlist)[::prefs::kNetworkServiceSandboxEnabled] =
 +      settings_api::PrefType::kBoolean;
@@ -99,6 +113,11 @@ index f4534420339a7..49393040e0741 100644
 +        <settings-toggle-button
 +            pref="{{prefs.webkit.webprefs.force_dark_mode_enabled}}"
 +            label="Website Dark Mode">
++        </settings-toggle-button>
++        <div class="hr"></div>
++        <settings-toggle-button
++            pref="{{prefs.vertical_tabs.enabled}}"
++            label="Vertical Tabs">
 +        </settings-toggle-button>
          <div
              class="hr"
