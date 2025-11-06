@@ -22,6 +22,7 @@ index 33f2e64c64..b4762ba94d 100644
 +BASE_FEATURE(kVerticalTabs, base::FEATURE_ENABLED_BY_DEFAULT);
 
  BASE_FEATURE(kTabSelectionByPointer, base::FEATURE_DISABLED_BY_DEFAULT);
+ 
 diff --git a/chrome/browser/extensions/api/settings_private/prefs_util.cc b/chrome/browser/extensions/api/settings_private/prefs_util.cc
 index ab19b6cb94e9d..b9f99abf97a1c 100644
 --- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
@@ -41,7 +42,7 @@ index ab19b6cb94e9d..b9f99abf97a1c 100644
 +      settings_api::PrefType::kBoolean;
 +  (*s_allowlist)[::prefs::kDisableExtensions] =
 +      settings_api::PrefType::kBoolean;
-+  (*s_allowlist)[::prefs::kVerticalTabs] =
++  (*s_allowlist)[::prefs::kVerticalTabsEnabled] =
 +      settings_api::PrefType::kBoolean;
 +  (*s_allowlist)[::prefs::kNetworkServiceSandboxEnabled] =
 +      settings_api::PrefType::kBoolean;
