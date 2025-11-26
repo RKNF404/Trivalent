@@ -571,6 +571,7 @@ index 42fce93fa9125..2e41a1c3fcf44 100644
 -  setupEnhancedProtectionMessage();
    setupSSLDebuggingInfo();
    document.addEventListener('keypress', handleKeypress);
+ 
 diff --git a/chrome/browser/resources/settings/reset_page/reset_profile_dialog.html b/chrome/browser/resources/settings/reset_page/reset_profile_dialog.html
 index 3eb464c572..e9498414b8 100644
 --- a/chrome/browser/resources/settings/reset_page/reset_profile_dialog.html
