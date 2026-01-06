@@ -499,10 +499,18 @@ index f6e95147c6..81f68bf97d 100644
    // No flags are allowed.
    const uint64_t kAllowedMask = 0;
 diff --git a/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc b/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc
-index c4e4614eb8..875564c677 100644
+index c4e4614eb8..288f7f03ea 100644
 --- a/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc
 +++ b/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc
-@@ -29,7 +29,16 @@ CrosNvidiaGpuProcessPolicy::~CrosNvidiaGpuProcessPolicy() = default;
+@@ -3,6 +3,7 @@
+ // found in the LICENSE file.
+ 
+ #include "sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.h"
++#include "sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.h"
+ 
+ // Define these so that unistd.h pulls in needed symbols.
+ #if !defined(__ARCH_WANT_SYSCALL_NO_AT) || \
+@@ -29,7 +30,16 @@ CrosNvidiaGpuProcessPolicy::~CrosNvidiaGpuProcessPolicy() = default;
  ResultExpr CrosNvidiaGpuProcessPolicy::EvaluateSyscall(int sysno) const {
    switch (sysno) {
      case __NR_sched_setscheduler:
@@ -552,7 +560,7 @@ index 5725da248d..1d4d1d60d6 100644
        break;
    }
 diff --git a/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc b/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc
-index 73bf31cb28..58f037ee7a 100644
+index 73bf31cb28..b198172a9d 100644
 --- a/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc
 +++ b/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc
 @@ -121,7 +121,7 @@ inline bool IsArchitectureArm() {
