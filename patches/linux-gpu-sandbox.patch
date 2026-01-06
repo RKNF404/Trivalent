@@ -485,7 +485,7 @@ index f6e95147c6..81f68bf97d 100644
    return If((flags & ~kAllowedMask) == 0, Allow()).Else(CrashSIGSYS());
  }
  
-+ResultExpr RestrictMmapFlagsNvidia() {
++SANDBOX_EXPORT ResultExpr RestrictMmapFlagsNvidia() {
 +  const uint64_t kNvidiaSpecificAllowedMask = MAP_32BIT | MAP_EXECUTABLE;
 +  const uint64_t kAllowedMask = MAP_SHARED | MAP_PRIVATE | MAP_ANONYMOUS |
 +                                MAP_STACK | MAP_NORESERVE | MAP_FIXED |
