@@ -11,7 +11,7 @@ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, e
 See the License for the specific language governing permissions and limitations under the License.
 ---
 diff --git a/content/common/gpu_pre_sandbox_hook_linux.cc b/content/common/gpu_pre_sandbox_hook_linux.cc
-index 2e53794fa3..b048ab99f7 100644
+index 2e53794fa3..48f183fd9c 100644
 --- a/content/common/gpu_pre_sandbox_hook_linux.cc
 +++ b/content/common/gpu_pre_sandbox_hook_linux.cc
 @@ -56,6 +56,14 @@ inline bool IsChromeOS() {
@@ -232,22 +232,14 @@ index 2e53794fa3..b048ab99f7 100644
      command_set.set(sandbox::syscall_broker::COMMAND_READLINK);
    }
    return command_set;
-@@ -621,16 +783,14 @@ sandbox::syscall_broker::BrokerCommandSet CommandSetForGPU(
- 
- std::vector<BrokerFilePermission> FilePermissionsForGpu(
-     const sandbox::policy::SandboxSeccompBPF::Options& options) {
--  // All GPU process policies need this file brokered out.
--  static const char kDriRcPath[] = "/etc/drirc";
--  std::vector<BrokerFilePermission> permissions = {
--      BrokerFilePermission::ReadOnly(kDriRcPath)};
+@@ -625,12 +787,10 @@ std::vector<BrokerFilePermission> FilePermissionsForGpu(
+   static const char kDriRcPath[] = "/etc/drirc";
+   std::vector<BrokerFilePermission> permissions = {
+       BrokerFilePermission::ReadOnly(kDriRcPath)};
 -
 -  AddVulkanICDPermissions(&permissions);
 -
-+  std::vector<BrokerFilePermission> permissions;
    if (IsChromeOS()) {
-+    // All GPU process policies need this file brokered out.
-+    static const char kDriRcPath[] = "/etc/drirc";
-+    permissions.push_back(BrokerFilePermission::ReadOnly(kDriRcPath));
      // Permissions are additive, there can be multiple GPUs in the system.
      AddStandardChromeOsPermissions(&permissions);
 +    AddVulkanICDPermissions(&permissions);
@@ -259,7 +251,7 @@ index 2e53794fa3..b048ab99f7 100644
      }
      return permissions;
 +  } else if (IsLinux()) {
-+    // WIP: implement every permission subset
++    // WIP
 +    AddStandardChromeOsPermissions(&permissions);
 +    AddLibGalliumLinuxPermissions(&permissions, options.driver_version);
 +    if (options.use_amd_specific_policies) {
@@ -485,8 +477,50 @@ index f7044194b5..0336958235 100644
      gpu_info_.sandboxed = sandbox_helper_->EnsureSandboxInitialized(
          watchdog_thread_.get(), &gpu_info_, gpu_preferences_);
      attempted_startsandbox = true;
+diff --git a/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc b/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc
+index f6e95147c6..81f68bf97d 100644
+--- a/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc
++++ b/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc
+@@ -256,6 +256,16 @@ ResultExpr RestrictMmapFlags() {
+   return If((flags & ~kAllowedMask) == 0, Allow()).Else(CrashSIGSYS());
+ }
+ 
++ResultExpr RestrictMmapFlagsNvidia() {
++  const uint64_t kNvidiaSpecificAllowedMask = MAP_32BIT | MAP_EXECUTABLE;
++  const uint64_t kAllowedMask = MAP_SHARED | MAP_PRIVATE | MAP_ANONYMOUS |
++                                MAP_STACK | MAP_NORESERVE | MAP_FIXED |
++                                MAP_DENYWRITE | MAP_LOCKED | MAP_DROPPABLE |
++                                kNvidiaSpecificAllowedMask;
++  const Arg<int> flags(3);
++  return If((flags & ~kAllowedMask) == 0, Allow()).Else(CrashSIGSYS());
++}
++
+ SANDBOX_EXPORT ResultExpr RestrictMremapFlagsForODML() {
+   // No flags are allowed.
+   const uint64_t kAllowedMask = 0;
+diff --git a/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc b/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc
+index c4e4614eb8..875564c677 100644
+--- a/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc
++++ b/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc
+@@ -29,7 +29,16 @@ CrosNvidiaGpuProcessPolicy::~CrosNvidiaGpuProcessPolicy() = default;
+ ResultExpr CrosNvidiaGpuProcessPolicy::EvaluateSyscall(int sysno) const {
+   switch (sysno) {
+     case __NR_sched_setscheduler:
++    case __NR_mprotect:
+       return Allow();
++#if defined(__i386__) || defined(__x86_64__) || defined(__mips__)
++    // (MAP_LOCKED | MAP_EXECUTABLE | MAP_32BIT)
++    case __NR_mmap:
++      return RestrictMmapFlagsNvidia();
++#endif
++    case __NR_memfd_create:
++      // TODO(crbug.com/442771181)
++      return RestrictMemfdCreateWithExecMappings();
+     default:
+       return GpuProcessPolicy::EvaluateSyscall(sysno);
+   }
 diff --git a/sandbox/policy/linux/bpf_gpu_policy_linux.cc b/sandbox/policy/linux/bpf_gpu_policy_linux.cc
-index 5725da248d..75cc61200a 100644
+index 5725da248d..1d4d1d60d6 100644
 --- a/sandbox/policy/linux/bpf_gpu_policy_linux.cc
 +++ b/sandbox/policy/linux/bpf_gpu_policy_linux.cc
 @@ -80,16 +80,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
@@ -506,6 +540,17 @@ index 5725da248d..75cc61200a 100644
      // XNNPACK needs mremap when building weight caches.
      case __NR_mremap:
        if (mremap_policy_ == MremapPolicy::kAllow) {
+@@ -106,10 +96,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
+       return RestrictSchedTarget(GetPolicyPid(), sysno);
+     case __NR_prlimit64:
+       return RestrictPrlimit64(GetPolicyPid());
+-    case __NR_memfd_create:
+-      // TODO(crbug.com/442771181): Only nvidia drivers seems to use this. Maybe
+-      // scope this allowance to only nvidia drivers.
+-      return RestrictMemfdCreateWithExecMappings();
+     default:
+       break;
+   }
 diff --git a/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc b/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc
 index 73bf31cb28..58f037ee7a 100644
 --- a/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc
