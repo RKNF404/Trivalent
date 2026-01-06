@@ -555,23 +555,12 @@ diff --git a/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc b/sandbox/policy/
 index 73bf31cb28..58f037ee7a 100644
 --- a/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc
 +++ b/sandbox/policy/linux/sandbox_seccomp_bpf_linux.cc
-@@ -94,8 +94,8 @@ namespace {
- // nacl_helper needs to be tiny and includes only part of content/
- // in its dependencies. Make sure to not link things that are not needed.
- #if !defined(IN_NACL_HELPER)
--inline bool IsChromeOS() {
--#if BUILDFLAG(IS_CHROMEOS)
-+inline bool IsLinux() {
-+#if BUILDFLAG(IS_LINUX)
-   return true;
- #else
-   return false;
 @@ -121,7 +121,7 @@ inline bool IsArchitectureArm() {
  std::unique_ptr<BPFBasePolicy> GetGpuProcessSandbox(
      const SandboxSeccompBPF::Options& options,
      MremapPolicy mremap_policy) {
 -  if (IsChromeOS() || UseChromecastSandboxAllowlist()) {
-+  if (IsLinux() || UseChromecastSandboxAllowlist()) {
++  if (true) {
      if (IsArchitectureArm()) {
        return std::make_unique<CrosArmGpuProcessPolicy>(
            mremap_policy, base::CommandLine::ForCurrentProcess()->HasSwitch(
