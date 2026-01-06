@@ -160,7 +160,7 @@ index 2e53794fa3..b048ab99f7 100644
 +  AddDrmGpuPermissions(permissions);
 +}
 +
-+void AddVirtIOGpuPermissions(std::vector<BrokerFilePermission>* permissions) {
++void AddVirtIOGpuPermissionsLinux(std::vector<BrokerFilePermission>* permissions) {
 +  static const char* const kReadOnlyList[] = {
 +      // Linux Specific
 +      "/usr/lib64/libwayland-server.so.0",
@@ -247,7 +247,7 @@ index 2e53794fa3..b048ab99f7 100644
    if (IsChromeOS()) {
 +    // All GPU process policies need this file brokered out.
 +    static const char kDriRcPath[] = "/etc/drirc";
-+    permissions->push_back(BrokerFilePermission::ReadOnly(kDriRcPath));
++    permissions.push_back(BrokerFilePermission::ReadOnly(kDriRcPath));
      // Permissions are additive, there can be multiple GPUs in the system.
      AddStandardChromeOsPermissions(&permissions);
 +    AddVulkanICDPermissions(&permissions);
