@@ -498,6 +498,21 @@ index f6e95147c6..81f68bf97d 100644
  SANDBOX_EXPORT ResultExpr RestrictMremapFlagsForODML() {
    // No flags are allowed.
    const uint64_t kAllowedMask = 0;
+diff --git a/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.h b/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.h
+index ed0f61cfb2..5f711ed1bb 100644
+--- a/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.h
++++ b/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.h
+@@ -40,6 +40,10 @@ SANDBOX_EXPORT bpf_dsl::ResultExpr RestrictIoctl();
+ // Crash if any other flag is used.
+ SANDBOX_EXPORT bpf_dsl::ResultExpr RestrictMmapFlags();
+
++// Nvidia requires a few more mmap calls in the gpu process
++// Extra flags: MAP_32BIT | MAP_EXECUTABLE
++SANDBOX_EXPORT bpf_dsl::ResultExpr RestrictMmapFlagsNvidia();
++
+ // Restrict the flags argument in mremap(2).
+ // Crash if any flags are used.
+ SANDBOX_EXPORT bpf_dsl::ResultExpr RestrictMremapFlagsForODML();
 diff --git a/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc b/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc
 index c4e4614eb8..288f7f03ea 100644
 --- a/sandbox/policy/linux/bpf_cros_nvidia_gpu_policy_linux.cc
