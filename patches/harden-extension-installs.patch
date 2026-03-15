@@ -1,4 +1,4 @@
-Copyright 2024-2025 The Trivalent Authors
+Copyright 2026 The Trivalent Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -46,3 +46,30 @@ index e4bb829059..72b45f2a0f 100644
      ParseHostPermissions(extension, keys::kOptionalHostPermissions,
                           manifest_optional_hosts,
                           initial_optional_permissions_->api_permissions,
+diff --git a/extensions/common/manifest_handlers/web_accessible_resources_info.cc b/extensions/common/manifest_handlers/web_accessible_resources_info.cc
+index 719d252a3d..a624443091 100644
+--- a/extensions/common/manifest_handlers/web_accessible_resources_info.cc
++++ b/extensions/common/manifest_handlers/web_accessible_resources_info.cc
+@@ -294,17 +294,17 @@ bool WebAccessibleResourcesInfo::HasWebAccessibleResources(
+ // static
+ bool WebAccessibleResourcesInfo::ShouldUseDynamicUrl(const Extension* extension,
+                                                      const std::string& path) {
++  bool ret = true;
+   const WebAccessibleResourcesInfo* info = GetResourcesInfo(extension);
+   if (!info) {
+-    return false;
++    return ret;
+   }
+   for (const auto& entry : info->web_accessible_resources) {
+-    if (extension->ResourceMatches(entry.resources, path) &&
+-        entry.use_dynamic_url) {
+-      return true;
++    if (extension->ResourceMatches(entry.resources, path)) {
++      ret = entry.use_dynamic_url;
+     }
+   }
+-  return false;
++  return ret;
+ }
+
+ WebAccessibleResourcesInfo::Entry::Entry() = default;
