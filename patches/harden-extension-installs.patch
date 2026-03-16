@@ -115,7 +115,7 @@ index 25f6860b1d..36b5c10bb7 100644
  }
 
 -bool Extension::InitFromValue(int flags, std::u16string* error) {
-+bool Extension::InitFromValue(int flags, std::u16string* error, const bool *duringInstall) {
++bool Extension::InitFromValue(int flags, std::u16string* error, const bool &duringInstall) {
    DCHECK(error);
 
    creation_flags_ = flags;
@@ -157,7 +157,7 @@ index 3fe9cd40f2..a092f41422 100644
    // either wrap the base::DictValue and go with that only, or we should parse
    // into strong types and discard the value. But doing both is bad.
 -  bool InitFromValue(int flags, std::u16string* error);
-+  bool InitFromValue(int flags, std::u16string* error, const bool duringInstall);
++  bool InitFromValue(int flags, std::u16string* error, const bool &duringInstall);
 
    // The following are helpers for InitFromValue to load various features of the
    // extension from the manifest.
@@ -170,7 +170,7 @@ index d48fac87be..f962903378 100644
  PermissionsParser::~PermissionsParser() = default;
 
 -bool PermissionsParser::Parse(Extension* extension, std::u16string* error) {
-+bool PermissionsParser::Parse(Extension* extension, std::u16string* error, const bool duringInstall) {
++bool PermissionsParser::Parse(Extension* extension, std::u16string* error, const bool &duringInstall) {
    initial_required_permissions_ = std::make_unique<InitialPermissions>();
    if (!ParseHelper(extension,
                     keys::kPermissions,
@@ -193,7 +193,7 @@ index fdcb34544c..6e6c7083e3 100644
 
    // Parse the manifest-specified permissions.
 -  bool Parse(Extension* extension, std::u16string* error);
-+  bool Parse(Extension* extension, std::u16string* error, const bool duringInstall);
++  bool Parse(Extension* extension, std::u16string* error, const bool &duringInstall);
 
    // Finalize the permissions, setting the related manifest data on the
    // extension.
