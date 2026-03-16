@@ -34,3 +34,166 @@ index 719d252a3d..f87622d511 100644
  }
 
  WebAccessibleResourcesInfo::Entry::Entry() = default;
+diff --git a/chrome/browser/extensions/installed_loader.cc b/chrome/browser/extensions/installed_loader.cc
+index 789d67542c..22df623915 100644
+--- a/chrome/browser/extensions/installed_loader.cc
++++ b/chrome/browser/extensions/installed_loader.cc
+@@ -293,7 +293,7 @@ void InstalledLoader::Load(const ExtensionInfo& info, bool write_to_prefs) {
+   if (info.extension_manifest) {
+     extension = Extension::Create(info.extension_path, info.extension_location,
+                                   *info.extension_manifest,
+-                                  GetCreationFlags(&info), &error);
++                                  GetCreationFlags(&info), &error, true);
+   } else {
+     error = base::UTF8ToUTF16(
+         std::string_view(manifest_errors::kManifestUnreadable));
+diff --git a/extensions/browser/delayed_install_manager.cc b/extensions/browser/delayed_install_manager.cc
+index fca701b4db..ee3ec16103 100644
+--- a/extensions/browser/delayed_install_manager.cc
++++ b/extensions/browser/delayed_install_manager.cc
+@@ -69,7 +69,7 @@ void DelayedInstallManager::FinishInstallationsDelayedByShutdown() {
+           info.extension_path, info.extension_location,
+           *info.extension_manifest,
+           extension_prefs_->GetDelayedInstallCreationFlags(info.extension_id),
+-          info.extension_id, &error);
++          info.extension_id, &error, true);
+       if (extension.get()) {
+         delayed_installs_.Insert(extension);
+       }
+diff --git a/extensions/browser/sandboxed_unpacker.cc b/extensions/browser/sandboxed_unpacker.cc
+index 80611122c0..0a8bfc46a2 100644
+--- a/extensions/browser/sandboxed_unpacker.cc
++++ b/extensions/browser/sandboxed_unpacker.cc
+@@ -505,7 +505,7 @@ void SandboxedUnpacker::ReadManifestDone(
+   std::u16string error;
+   scoped_refptr<Extension> extension(
+       Extension::Create(extension_root_, location_, *dict, creation_flags_,
+-                        extension_id_, &error));
++                        extension_id_, &error, true));
+   if (!extension) {
+     ReportUnpackExtensionFailed(error);
+     return;
+diff --git a/extensions/common/extension.cc b/extensions/common/extension.cc
+index 25f6860b1d..36b5c10bb7 100644
+--- a/extensions/common/extension.cc
++++ b/extensions/common/extension.cc
+@@ -236,18 +236,19 @@ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
+                                            ManifestLocation location,
+                                            const base::DictValue& value,
+                                            int flags,
+-                                           std::u16string* error) {
++                                           std::u16string* error,
++                                           const bool duringInstall = false) {
+   return Extension::Create(path, location, value, flags,
+                            std::string(),  // ID is ignored if empty.
+-                           error);
++                           error, duringInstall);
+ }
+-
+ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
+                                            ManifestLocation location,
+                                            const base::DictValue& value,
+                                            int flags,
+                                            const ExtensionId& explicit_id,
+-                                           std::u16string* error) {
++                                           std::u16string* error,
++                                           const bool duringInstall = false) {
+   base::ElapsedTimer timer;
+   DCHECK(error);
+
+@@ -279,7 +280,7 @@ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
+   extension->dynamic_url_ = Extension::GetBaseURLFromExtensionId(
+       extension->guid_.AsLowercaseString());
+
+-  if (!extension->InitFromValue(flags, error)) {
++  if (!extension->InitFromValue(flags, error, duringInstall)) {
+     return nullptr;
+   }
+
+@@ -604,7 +605,7 @@ Extension::Extension(const base::FilePath& path,
+ Extension::~Extension() {
+ }
+
+-bool Extension::InitFromValue(int flags, std::u16string* error) {
++bool Extension::InitFromValue(int flags, std::u16string* error, const bool *duringInstall) {
+   DCHECK(error);
+
+   creation_flags_ = flags;
+@@ -641,7 +642,7 @@ bool Extension::InitFromValue(int flags, std::u16string* error) {
+   }
+
+   permissions_parser_ = std::make_unique<PermissionsParser>();
+-  if (!permissions_parser_->Parse(this, error)) {
++  if (!permissions_parser_->Parse(this, error, duringInstall)) {
+     return false;
+   }
+
+diff --git a/extensions/common/extension.h b/extensions/common/extension.h
+index 3fe9cd40f2..a092f41422 100644
+--- a/extensions/common/extension.h
++++ b/extensions/common/extension.h
+@@ -136,7 +136,8 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
+                                          mojom::ManifestLocation location,
+                                          const base::DictValue& value,
+                                          int flags,
+-                                         std::u16string* error);
++                                         std::u16string* error,
++                                         const bool duringInstall);
+
+   // In a few special circumstances, we want to create an Extension and give it
+   // an explicit id. Most consumers should just use the other Create() method.
+@@ -145,7 +146,8 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
+                                          const base::DictValue& value,
+                                          int flags,
+                                          const ExtensionId& explicit_id,
+-                                         std::u16string* error);
++                                         std::u16string* error,
++                                         const bool duringInstall);
+
+   // Valid schemes for web extent URLPatterns.
+   static const int kValidWebExtentSchemes;
+@@ -349,7 +351,7 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
+   // of the underlying base::DictValue in its members. We should decide to
+   // either wrap the base::DictValue and go with that only, or we should parse
+   // into strong types and discard the value. But doing both is bad.
+-  bool InitFromValue(int flags, std::u16string* error);
++  bool InitFromValue(int flags, std::u16string* error, const bool duringInstall);
+
+   // The following are helpers for InitFromValue to load various features of the
+   // extension from the manifest.
+diff --git a/extensions/common/manifest_handlers/permissions_parser.cc b/extensions/common/manifest_handlers/permissions_parser.cc
+index d48fac87be..f962903378 100644
+--- a/extensions/common/manifest_handlers/permissions_parser.cc
++++ b/extensions/common/manifest_handlers/permissions_parser.cc
+@@ -406,7 +406,7 @@ struct PermissionsParser::InitialPermissions {
+ PermissionsParser::PermissionsParser() = default;
+ PermissionsParser::~PermissionsParser() = default;
+
+-bool PermissionsParser::Parse(Extension* extension, std::u16string* error) {
++bool PermissionsParser::Parse(Extension* extension, std::u16string* error, const bool duringInstall) {
+   initial_required_permissions_ = std::make_unique<InitialPermissions>();
+   if (!ParseHelper(extension,
+                    keys::kPermissions,
+@@ -426,7 +426,8 @@ bool PermissionsParser::Parse(Extension* extension, std::u16string* error) {
+   if (extension->manifest_version() >= 3) {
+     std::vector<std::string> manifest_hosts;
+     std::vector<std::string> manifest_optional_hosts;
+-    if (!ParseHostsFromJSON(extension, keys::kHostPermissions, &manifest_hosts,
++    if (!ParseHostsFromJSON(extension, keys::kHostPermissions,
++                            duringInstall ? &optional_manifest_hosts : &manifest_hosts,
+                             error)) {
+       return false;
+     }
+diff --git a/extensions/common/manifest_handlers/permissions_parser.h b/extensions/common/manifest_handlers/permissions_parser.h
+index fdcb34544c..6e6c7083e3 100644
+--- a/extensions/common/manifest_handlers/permissions_parser.h
++++ b/extensions/common/manifest_handlers/permissions_parser.h
+@@ -28,7 +28,7 @@ class PermissionsParser {
+   ~PermissionsParser();
+
+   // Parse the manifest-specified permissions.
+-  bool Parse(Extension* extension, std::u16string* error);
++  bool Parse(Extension* extension, std::u16string* error, const bool duringInstall);
+
+   // Finalize the permissions, setting the related manifest data on the
+   // extension.
