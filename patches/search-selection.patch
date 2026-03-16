@@ -1,4 +1,4 @@
-Copyright 2024-2025 The Trivalent Authors
+Copyright 2024-2026 The Trivalent Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,19 +25,31 @@ index e4d2eacf3f316..0dfdd8c0d365d 100644
  
    if (command_line->HasSwitch(switches::kNoFirstRun) &&
        !command_line->HasSwitch(
-diff --git a/components/regional_capabilities/regional_capabilities_utils.cc b/components/regional_capabilities/regional_capabilities_utils.cc
-index cbdceda6674e2..be04a19262c35 100644
---- a/components/regional_capabilities/regional_capabilities_utils.cc
-+++ b/components/regional_capabilities/regional_capabilities_utils.cc
-@@ -21,9 +21,8 @@ bool IsEeaCountry(int country_id) {
-   // the current profile country.
-   // TODO(crbug.com/328040066): Move this check to
-   // `RegionalCapabilitiesService::IsInEeaCountry()`.
--  return HasSearchEngineCountryListOverride()
--             ? true
--             : kEeaChoiceCountriesIds.contains(country_id);
-+  // We want the search choice screen no matter what
-+  return true;
- }
- 
- std::optional<SearchEngineCountryOverride> GetSearchEngineCountryOverride() {
+diff --git a/components/regional_capabilities/program_settings.cc b/components/regional_capabilities/program_settings.cc
+index 7d49e2a8dd..34308c414f 100644
+--- a/components/regional_capabilities/program_settings.cc
++++ b/components/regional_capabilities/program_settings.cc
+@@ -106,8 +106,8 @@ bool IsValidSerializedProgram(int serialized_program) {
+
+ bool IsInProgramRegion(Program program,
+                        const country_codes::CountryId& country_id) {
+-  if (program == Program::kDefault) {
+-    return true;  // All countries can be associated with the default program.
++  if (program == Program::kWaffle) {
++    return true;
+   }
+
+   return std::ranges::contains(
+diff --git a/components/regional_capabilities/regional_capabilities_service.cc b/components/regional_capabilities/regional_capabilities_service.cc
+index 4f95ae3d04..7f4d4953ec 100644
+--- a/components/regional_capabilities/regional_capabilities_service.cc
++++ b/components/regional_capabilities/regional_capabilities_service.cc
+@@ -169,7 +169,7 @@ Program CountryIdToProgram(const CountryId& country_id) {
+   static constexpr Program kCountryDerivedPrograms[] = {
+ #if BUILDFLAG(IS_IOS)
+       // Only iOS can derive Taiyaki scope directly from the country.
+-      Program::kTaiyaki,
++      //Program::kTaiyaki,
+ #endif
+
+       Program::kWaffle,
