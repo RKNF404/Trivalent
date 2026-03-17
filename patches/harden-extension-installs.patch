@@ -142,7 +142,7 @@ index 25f6860b1d..1c78d847c1 100644
      return false;
    }
 
-diff --git a//extension.h b//extension.h
+diff --git a/extensions/common/extension.h b/extensions/common/extension.h
 index 3fe9cd40f2..25bd149017 100644
 --- a/extensions/common/extension.h
 +++ b/extensions/common/extension.h
