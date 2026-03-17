@@ -74,34 +74,65 @@ index 80611122c0..0a8bfc46a2 100644
      ReportUnpackExtensionFailed(error);
      return;
 diff --git a/extensions/common/extension.cc b/extensions/common/extension.cc
-index 25f6860b1d..36b5c10bb7 100644
+index 25f6860b1d..1c78d847c1 100644
 --- a/extensions/common/extension.cc
 +++ b/extensions/common/extension.cc
-@@ -236,18 +236,19 @@ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
-                                            ManifestLocation location,
+@@ -28,7 +28,7 @@
+ #include "base/timer/elapsed_timer.h"
+ #include "base/version.h"
+ #include "components/crx_file/id_util.h"
+-#include "content/public/common/url_constants.h"
++extensions/common/extension.cc#include "content/public/common/url_constants.h"
+ #include "extensions/common/constants.h"
+ #include "extensions/common/error_utils.h"
+ #include "extensions/common/extension_id.h"
+@@ -76,7 +76,7 @@ constexpr int kMaxInputSizeBytes = 100 * 1024;
+
+ bool ContainsReservedCharacters(const base::FilePath& path) {
+   // We should disallow backslash '\\' as file path separator even on Windows,
+-  // because the backslash is not regarded as file path separator on Linux/Mac.
++  // because the backslash is extensions/common/extension.ccnot regarded as file path separator on Linux/Mac.
+   // Extensions are cross-platform.
+   // Since FilePath uses backslash '\\' as file path separator on Windows, so we
+   // need to check manually.
+@@ -237,9 +237,17 @@ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
                                             const base::DictValue& value,
                                             int flags,
--                                           std::u16string* error) {
+                                            std::u16string* error) {
++}
++
++scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
++                                           ManifestLocation location,
++                                           const base::DictValue& value,
++                                           int flags,
 +                                           std::u16string* error,
-+                                           const bool duringInstall = false) {
++                                           const bool duringInstall) {
    return Extension::Create(path, location, value, flags,
                             std::string(),  // ID is ignored if empty.
 -                           error);
 +                           error, duringInstall);
  }
--
+
  scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
-                                            ManifestLocation location,
-                                            const base::DictValue& value,
+@@ -248,6 +256,17 @@ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
                                             int flags,
                                             const ExtensionId& explicit_id,
--                                           std::u16string* error) {
+                                            std::u16string* error) {
++  return Extension::Create(path, location, value, flags,
++                           explicit_id, error, false);
++}
++
++scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
++                                           ManifestLocation location,
++                                           const base::DictValue& value,
++                                           int flags,
++                                           const ExtensionId& explicit_id,
 +                                           std::u16string* error,
-+                                           const bool duringInstall = false) {
++                                           const bool duringInstall) {
    base::ElapsedTimer timer;
    DCHECK(error);
 
-@@ -279,7 +280,7 @@ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
+@@ -279,7 +298,7 @@ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
    extension->dynamic_url_ = Extension::GetBaseURLFromExtensionId(
        extension->guid_.AsLowercaseString());
 
@@ -110,7 +141,7 @@ index 25f6860b1d..36b5c10bb7 100644
      return nullptr;
    }
 
-@@ -604,7 +605,7 @@ Extension::Extension(const base::FilePath& path,
+@@ -604,7 +623,7 @@ Extension::Extension(const base::FilePath& path,
  Extension::~Extension() {
  }
 
@@ -119,7 +150,7 @@ index 25f6860b1d..36b5c10bb7 100644
    DCHECK(error);
 
    creation_flags_ = flags;
-@@ -641,7 +642,7 @@ bool Extension::InitFromValue(int flags, std::u16string* error) {
+@@ -641,7 +660,7 @@ bool Extension::InitFromValue(int flags, std::u16string* error) {
    }
 
    permissions_parser_ = std::make_unique<PermissionsParser>();
@@ -129,20 +160,37 @@ index 25f6860b1d..36b5c10bb7 100644
    }
 
 diff --git a/extensions/common/extension.h b/extensions/common/extension.h
-index 3fe9cd40f2..a092f41422 100644
+index 3fe9cd40f2..25bd149017 100644
 --- a/extensions/common/extension.h
 +++ b/extensions/common/extension.h
-@@ -136,7 +136,8 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
+@@ -132,12 +132,26 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
+   Extension(const Extension&) = delete;
+   Extension& operator=(const Extension&) = delete;
+
++  static scoped_refptr<Extension> Create(const base::FilePath& path,
++                                         mojom::ManifestLocation location,
++                                         const base::DictValue& value,
++                                         int flags,
++                                         std::u16string* error,
++                                         const bool duringInstall);
++
+   static scoped_refptr<Extension> Create(const base::FilePath& path,
                                           mojom::ManifestLocation location,
                                           const base::DictValue& value,
                                           int flags,
--                                         std::u16string* error);
-+                                         std::u16string* error,
-+                                         const bool duringInstall);
+                                          std::u16string* error);
 
++  static scoped_refptr<Extension> Create(const base::FilePath& path,
++                                         mojom::ManifestLocation location,
++                                         const base::DictValue& value,
++                                         int flags,
++                                         const ExtensionId& explicit_id,
++                                         std::u16string* error);
++
    // In a few special circumstances, we want to create an Extension and give it
    // an explicit id. Most consumers should just use the other Create() method.
-@@ -145,7 +146,8 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
+   static scoped_refptr<Extension> Create(const base::FilePath& path,
+@@ -145,7 +159,8 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
                                           const base::DictValue& value,
                                           int flags,
                                           const ExtensionId& explicit_id,
@@ -152,7 +200,7 @@ index 3fe9cd40f2..a092f41422 100644
 
    // Valid schemes for web extent URLPatterns.
    static const int kValidWebExtentSchemes;
-@@ -349,7 +351,7 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
+@@ -349,7 +364,7 @@ class Extension final : public base::RefCountedThreadSafe<Extension> {
    // of the underlying base::DictValue in its members. We should decide to
    // either wrap the base::DictValue and go with that only, or we should parse
    // into strong types and discard the value. But doing both is bad.
