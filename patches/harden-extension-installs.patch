@@ -77,7 +77,6 @@ diff --git a/extensions/common/extension.cc b/extensions/common/extension.cc
 index 25f6860b1d..1c78d847c1 100644
 --- a/extensions/common/extension.cc
 +++ b/extensions/common/extension.cc
-@@ -76,7 +76,7 @@ constexpr int kMaxInputSizeBytes = 100 * 1024;
 @@ -237,9 +237,17 @@ scoped_refptr<Extension> Extension::Create(const base::FilePath& path,
                                             const base::DictValue& value,
                                             int flags,
