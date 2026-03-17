@@ -210,7 +210,7 @@ index d48fac87be..f962903378 100644
      std::vector<std::string> manifest_optional_hosts;
 -    if (!ParseHostsFromJSON(extension, keys::kHostPermissions, &manifest_hosts,
 +    if (!ParseHostsFromJSON(extension, keys::kHostPermissions,
-+                            duringInstall ? &optional_manifest_hosts : &manifest_hosts,
++                            duringInstall ? &manifest_optional_hosts : &manifest_hosts,
                              error)) {
        return false;
      }
