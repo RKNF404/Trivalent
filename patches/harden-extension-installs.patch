@@ -10,30 +10,6 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
-diff --git a/extensions/common/manifest_handlers/web_accessible_resources_info.cc b/extensions/common/manifest_handlers/web_accessible_resources_info.cc
-index 719d252a3d..f87622d511 100644
---- a/extensions/common/manifest_handlers/web_accessible_resources_info.cc
-+++ b/extensions/common/manifest_handlers/web_accessible_resources_info.cc
-@@ -296,15 +296,14 @@ bool WebAccessibleResourcesInfo::ShouldUseDynamicUrl(const Extension* extension,
-                                                      const std::string& path) {
-   const WebAccessibleResourcesInfo* info = GetResourcesInfo(extension);
-   if (!info) {
--    return false;
-+    return true;
-   }
-   for (const auto& entry : info->web_accessible_resources) {
--    if (extension->ResourceMatches(entry.resources, path) &&
--        entry.use_dynamic_url) {
--      return true;
-+    if (extension->ResourceMatches(entry.resources, path)) {
-+      return entry.use_dynamic_url;
-     }
-   }
--  return false;
-+  return true;
- }
-
- WebAccessibleResourcesInfo::Entry::Entry() = default;
 diff --git a/chrome/browser/extensions/installed_loader.cc b/chrome/browser/extensions/installed_loader.cc
 index 789d67542c..22df623915 100644
 --- a/chrome/browser/extensions/installed_loader.cc
