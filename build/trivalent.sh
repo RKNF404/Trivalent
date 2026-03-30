@@ -63,16 +63,8 @@ declare USE_VULKAN="${USE_VULKAN:-false}"
 # USE_WAYLAND=[true|false|unknown]
 declare USE_WAYLAND="${USE_WAYLAND:-}"
 
-declare FEATURES=""
-declare CHROMIUM_FLAGS=""
-
-# obtain extra flags that are likely user-configured
-if [[ -d "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf.d" ]]; then
-  for conf_file in "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf.d"/*.conf; do
-    # shellcheck source=/etc/trivalent/trivalent.conf.d/99-example.conf
-    source "${conf_file}"
-  done
-fi
+# see trivalent-sandboxing-profile.conf
+declare -i BROWSER_SANDBOX_LEVEL="${BROWSER_SANDBOX_LEVEL:-0}"
 
 # BROWSER_LOG_LEVEL=[0,1,2]
 declare -rix BROWSER_LOG_LEVEL="${BROWSER_LOG_LEVEL:-0}"
@@ -83,6 +75,17 @@ function logecho () {
     echo "${2}"
   fi
 }
+
+declare FEATURES=""
+declare CHROMIUM_FLAGS=""
+
+# obtain extra flags that are likely user-configured
+if [[ -d "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf.d" ]]; then
+  for conf_file in "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf.d"/*.conf; do
+    # shellcheck source=/etc/trivalent/trivalent.conf.d/99-example.conf
+    source "${conf_file}"
+  done
+fi
 
 # obtain chromium flags from system file
 # shellcheck source=build/trivalent.conf
@@ -108,13 +111,9 @@ fi
 declare -r TMPFS_CACHE_DIR="/tmp/${CHROMIUM_NAME}_cache/"
 mkdir -p "$TMPFS_CACHE_DIR"
 
-declare BWRAP_ARGS="--dev-bind / /"
-BWRAP_ARGS+=" --cap-drop ALL" # if the browser has capabilities, that is very concerning
-if [[ -r "/etc/ld.so.preload" ]]; then # if the file doesnt exist, bwrap will error out
-  BWRAP_ARGS+=" --ro-bind-try /dev/null /etc/ld.so.preload" # avoid ld preload usage
-fi
-BWRAP_ARGS+=" --bind ${TMPFS_CACHE_DIR} ${HOME}/.cache" # avoid issues with other applications messing with cache
-BWRAP_ARGS+=" --setenv GDK_DISABLE icon-nodes" # avoid issues with glycin
+declare BWRAP_ARGS=""
+source "${HERE}/trivalent-sandboxing-profile.conf"
+declare -r BWRAP_ARGS
 
 # Do this at the end so that everything else still gets hardened_malloc
 declare -rx LD_PRELOAD=""
