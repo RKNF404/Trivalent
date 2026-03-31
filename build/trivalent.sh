@@ -108,9 +108,6 @@ if [[ -f "/usr/lib64/trivalent/install_filter.sh" ]] ; then
   /bin/bash /usr/lib64/trivalent/install_filter.sh
 fi
 
-declare -r TMPFS_CACHE_DIR="/tmp/${CHROMIUM_NAME}_cache/"
-mkdir -p "$TMPFS_CACHE_DIR"
-
 declare BWRAP_ARGS=""
 source "${HERE}/trivalent-sandboxing-profile.conf"
 declare -r BWRAP_ARGS
