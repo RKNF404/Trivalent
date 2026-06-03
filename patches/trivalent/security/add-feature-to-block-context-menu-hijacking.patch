@@ -1,0 +1,47 @@
+diff --git a/extensions/browser/event_router.cc b/extensions/browser/event_router.cc
+index 318a34cdab..63c7de1bf8 100644
+--- a/extensions/browser/event_router.cc
++++ b/extensions/browser/event_router.cc
+@@ -13,6 +13,7 @@
+ #include <tuple>
+ #include <utility>
+ 
++#include "third_party/blink/public/common/features.h"
+ #include "base/atomic_sequence_num.h"
+ #include "base/check_is_test.h"
+ #include "base/debug/crash_logging.h"
+@@ -570,6 +571,8 @@ void EventRouter::AddListenerForMainThread(
+                      listener_owner.get_extension_id());
+   } else {
+     DCHECK(listener_owner.is_listener_url());
++    if (event_listener->event_name == "contextmenu" &&
++        base::FeatureList::IsEnabled(blink::features::kBlockContextMenuHijacking))
+     AddEventListenerForURL(event_listener->event_name, process,
+                            listener_owner.get_listener_url());
+   }
+diff --git a/third_party/blink/common/features.cc b/third_party/blink/common/features.cc
+index c1b7530f42..726db25d4f 100644
+--- a/third_party/blink/common/features.cc
++++ b/third_party/blink/common/features.cc
+@@ -19,6 +19,8 @@
+ 
+ namespace blink::features {
+ 
++BASE_FEATURE(kBlockContextMenuHijacking, base::FEATURE_DISABLED_BY_DEFAULT);
++
+ // -----------------------------------------------------------------------------
+ // Feature definitions and associated constants (feature params, et cetera)
+ //
+diff --git a/third_party/blink/public/common/features.h b/third_party/blink/public/common/features.h
+index 048811af91..0f54383c19 100644
+--- a/third_party/blink/public/common/features.h
++++ b/third_party/blink/public/common/features.h
+@@ -20,6 +20,8 @@
+ namespace blink {
+ namespace features {
+ 
++BLINK_COMMON_EXPORT BASE_DECLARE_FEATURE(kBlockContextMenuHijacking);
++
+ // -----------------------------------------------------------------------------
+ // Feature declarations and associated constants (feature params, et cetera)
+ //
