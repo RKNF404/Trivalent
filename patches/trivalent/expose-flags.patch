@@ -14,7 +14,7 @@ diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
 index bdfa3ed504..9478ea82bc 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -4824,6 +4824,69 @@ const FeatureEntry::FeatureVariation kSigninPromoOnAvatarPillVariation[] = {
+@@ -4824,6 +4824,72 @@ const FeatureEntry::FeatureVariation kSigninPromoOnAvatarPillVariation[] = {
  //
  // When adding a new choice, add it to the end of the list.
  const FeatureEntry kFeatureEntries[] = {
@@ -26,8 +26,11 @@ index bdfa3ed504..9478ea82bc 100644
 +    {"middle-click-copy-paste", "Copy and Paste with Middle Click",
 +     "Controls copying and pasting with middle click. Enabled "
 +     "by default. This feature is provided by Trivalent.",
-+     kOsLinux,
-+     FEATURE_VALUE_TYPE(views::features::kMiddleClickCopyPaste)},
++     kOsLinux, FEATURE_VALUE_TYPE(views::features::kMiddleClickCopyPaste)},
++    {"block-context-menu-hijacking", "Block context menu hijacking",
++     "Prevents websites from hijacking usage of the context menu (right click). "
++     "Disabled by default. This feature is provided by Trivalent.",
++     kOsAll, FEATURE_VALUE_TYPE(blink::features::kBlockContextMenuHijacking)},
 +    {"show-punycode-domains", "Show punycode for IDN domains",
 +     "Shows punycode for IDN domains to mitigate IDN homograph attacks. "
 +     "Disabled by default. This feature is provided by Trivalent.",
