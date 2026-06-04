@@ -1,0 +1,14 @@
+diff --git a/third_party/blink/renderer/core/dom/events/event_target.cc b/third_party/blink/renderer/core/dom/events/event_target.cc
+index b834347d83..a11df3ddff 100644
+--- a/third_party/blink/renderer/core/dom/events/event_target.cc
++++ b/third_party/blink/renderer/core/dom/events/event_target.cc
+@@ -596,6 +596,9 @@ bool EventTarget::AddEventListenerInternal(
+   if (!execution_context)
+     return false;
+ 
++  if (event_type == event_type_names::kContextmenu)
++    return false;
++
+   // Unload/Beforeunload handlers are not allowed in fenced frames.
+   if (event_type == event_type_names::kUnload ||
+       event_type == event_type_names::kBeforeunload) {
