@@ -103,3 +103,33 @@ index 3692a01c1e..4ba109b3d8 100644
            data-parent-view-id="safetyHubEntryPoint" prefs="{{prefs}}"
            route-path$="[[routes_.SAFETY_HUB.path]]">
        </settings-safety-hub-page>
+diff --git a/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html b/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
+index 30937d3d36..72bc3860e2 100644
+--- a/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
++++ b/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
+@@ -80,25 +80,3 @@
+     </category-reference-card>
+   </template>
+ </div>
+-
+-<settings-section page-title="$i18n{yourSavedInfoAutofillSettingsLabel}">
+-  <collapsible-autofill-settings-card prefs="{{prefs}}">
+-  </collapsible-autofill-settings-card>
+-</settings-section>
+-
+-<settings-section page-title="$i18n{yourSavedInfoRelatedServicesTitle}">
+-  <div route-path="default">
+-    <cr-link-row id="passwordManagerButton" label="$i18n{localPasswordManager}"
+-        on-click="onPasswordManagerRelatedServiceClick_"
+-        start-icon="cr20:password" external>
+-    </cr-link-row>
+-    <cr-link-row id="googleWalletButton" label="$i18n{googleWalletTitle}"
+-        on-click="onGoogleWalletRelatedServiceClick_"
+-        start-icon="settings20:wallet" external>
+-    </cr-link-row>
+-    <cr-link-row id="googleAccountButton" label="$i18n{googleAccount}"
+-        on-click="onGoogleAccountRelatedServiceClick_"
+-        start-icon="settings20:googleg" external>
+-    </cr-link-row>
+-  </div>
+-</settings-section>
