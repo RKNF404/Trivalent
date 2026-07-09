@@ -1,0 +1,556 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Zoraver Kang <Zoraver@users.noreply.github.com>
+Date: Sun, 30 Jul 2023 14:08:17 -0400
+Subject: [PATCH] make cross-origin referrer behavior configurable
+
+This is implemented in a similar manner to the enable_referrers
+preference.
+
+The chrome for the cross-origin referrer policy preference is based on
+0089-Implement-UI-for-WebRTC-toggle.patch.
+---
+diff --git a/chrome/browser/net/profile_network_context_service.cc b/chrome/browser/net/profile_network_context_service.cc
+index 4c72849bea15c..3114c8cbe1b05 100644
+--- a/chrome/browser/net/profile_network_context_service.cc
++++ b/chrome/browser/net/profile_network_context_service.cc
+@@ -97,6 +97,7 @@
+ #include "services/network/public/cpp/features.h"
+ #include "services/network/public/mojom/cert_verifier_service.mojom.h"
+ #include "services/network/public/mojom/first_party_sets_access_delegate.mojom.h"
++#include "services/network/public/mojom/network_context.mojom-shared.h"
+ #include "services/network/public/mojom/network_context.mojom.h"
+ #include "services/network/public/mojom/network_service.mojom.h"
+ #include "third_party/blink/public/common/features.h"
+@@ -532,6 +533,11 @@ ProfileNetworkContextService::ProfileNetworkContextService(Profile* profile)
+       prefs::kEnableReferrers, profile_prefs,
+       base::BindRepeating(&ProfileNetworkContextService::UpdateReferrersEnabled,
+                           base::Unretained(this)));
++  cross_origin_referrer_policy_.Init(
++      prefs::kCrossOriginReferrerPolicy, profile_prefs,
++      base::BindRepeating(
++          &ProfileNetworkContextService::UpdateCrossOriginReferrerPolicy,
++          base::Unretained(this)));
+   cookie_settings_ = CookieSettingsFactory::GetForProfile(profile);
+   cookie_settings_observation_.Observe(cookie_settings_.get());
+ 
+@@ -652,6 +658,8 @@ void ProfileNetworkContextService::RegisterProfilePrefs(
+   registry->RegisterBooleanPref(prefs::kGloballyScopeHTTPAuthCacheEnabled,
+                                 false);
+   registry->RegisterListPref(prefs::kHSTSPolicyBypassList);
++  registry->RegisterIntegerPref(prefs::kCrossOriginReferrerPolicy,
++      static_cast<int>(network::mojom::CrossOriginReferrerPolicy::kReduce));
+   registry->RegisterListPref(prefs::kCACertificates);
+   registry->RegisterListPref(prefs::kCACertificatesWithConstraints);
+   registry->RegisterListPref(prefs::kCADistrustedCertificates);
+@@ -733,6 +741,16 @@ void ProfileNetworkContextService::UpdateReferrersEnabled() {
+       });
+ }
+ 
++void ProfileNetworkContextService::UpdateCrossOriginReferrerPolicy() {
++  const int cross_origin_referrer_policy = cross_origin_referrer_policy_.GetValue();
++  profile_->ForEachLoadedStoragePartition(
++      [&](content::StoragePartition* storage_partition) {
++        storage_partition->GetNetworkContext()->SetCrossOriginReferrerPolicy(
++            static_cast<network::mojom::CrossOriginReferrerPolicy>(
++                cross_origin_referrer_policy));
++      });
++}
++
+ network::mojom::CTPolicyPtr ProfileNetworkContextService::GetCTPolicy() {
+   auto* prefs = profile_->GetPrefs();
+   const base::ListValue& ct_excluded =
+diff --git a/chrome/browser/net/profile_network_context_service.h b/chrome/browser/net/profile_network_context_service.h
+index 042b06278c225..c1030f4b156f3 100644
+--- a/chrome/browser/net/profile_network_context_service.h
++++ b/chrome/browser/net/profile_network_context_service.h
+@@ -172,6 +172,7 @@ class ProfileNetworkContextService
+   std::string ComputeAcceptLanguage() const;
+ 
+   void UpdateReferrersEnabled();
++  void UpdateCrossOriginReferrerPolicy();
+ 
+   // Gets the current CTPolicy from preferences.
+   network::mojom::CTPolicyPtr GetCTPolicy();
+@@ -259,6 +260,7 @@ class ProfileNetworkContextService
+   BooleanPrefMember quic_allowed_;
+   StringPrefMember pref_accept_language_;
+   BooleanPrefMember enable_referrers_;
++  IntegerPrefMember cross_origin_referrer_policy_;
+   PrefChangeRegistrar pref_change_registrar_;
+ #if BUILDFLAG(IS_CHROMEOS)
+   // These prefs are only used on ChromeOS in the login screen profile.
+diff --git a/chrome/browser/renderer_preferences_util.cc b/chrome/browser/renderer_preferences_util.cc
+index 24c322a58bc48..2c334ec3dbf73 100644
+--- a/chrome/browser/renderer_preferences_util.cc
++++ b/chrome/browser/renderer_preferences_util.cc
+@@ -148,6 +148,9 @@ void UpdateFromSystemSettings(blink::RendererPreferences* prefs,
+   prefs->caret_blink_interval =
+       ui::NativeTheme::GetInstanceForNativeUi()->caret_blink_interval();
+   prefs->enable_referrers = pref_service->GetBoolean(prefs::kEnableReferrers);
++  prefs->cross_origin_referrer_policy =
++      static_cast<network::mojom::CrossOriginReferrerPolicy>(
++          pref_service->GetInteger(prefs::kCrossOriginReferrerPolicy));
+   prefs->enable_do_not_track =
+       pref_service->GetBoolean(prefs::kEnableDoNotTrack);
+   prefs->enable_encrypted_media =
+diff --git a/chrome/browser/ui/prefs/pref_watcher.cc b/chrome/browser/ui/prefs/pref_watcher.cc
+index 4cae431a3012e..dec95ff15e274 100644
+--- a/chrome/browser/ui/prefs/pref_watcher.cc
++++ b/chrome/browser/ui/prefs/pref_watcher.cc
+@@ -135,6 +135,8 @@ PrefWatcher::PrefWatcher(Profile* profile) : profile_(profile) {
+                                      renderer_callback);
+   profile_pref_change_registrar_.Add(prefs::kEnableReferrers,
+                                      renderer_callback);
++  profile_pref_change_registrar_.Add(prefs::kCrossOriginReferrerPolicy,
++                                     renderer_callback);
+   profile_pref_change_registrar_.Add(prefs::kEnableEncryptedMedia,
+                                      renderer_callback);
+   profile_pref_change_registrar_.Add(prefs::kWebRTCIPHandlingPolicy,
+diff --git a/chrome/common/pref_names.h b/chrome/common/pref_names.h
+index 32972bd3df56e..10efd0935afe5 100644
+--- a/chrome/common/pref_names.h
++++ b/chrome/common/pref_names.h
+@@ -938,6 +938,10 @@ inline constexpr char kEnableHyperlinkAuditing[] = "enable_a_ping";
+ // Whether to enable sending referrers.
+ inline constexpr char kEnableReferrers[] = "enable_referrers";
+ 
++// Preference to configure what referrers are sent cross-origin.
++inline constexpr char kCrossOriginReferrerPolicy[] =
++    "cross_origin_referrer_policy";
++
+ // Whether to send the DNT header.
+ inline constexpr char kEnableDoNotTrack[] = "enable_do_not_track";
+ 
+diff --git a/content/browser/renderer_host/navigation_request.cc b/content/browser/renderer_host/navigation_request.cc
+index 2809347b7fa08..df9456da879df 100644
+--- a/content/browser/renderer_host/navigation_request.cc
++++ b/content/browser/renderer_host/navigation_request.cc
+@@ -414,6 +414,29 @@ void AddAdditionalRequestHeaders(
+         blink::mojom::Referrer(GURL(), network::mojom::ReferrerPolicy::kNever);
+   }
+ 
++  // Enforce cross-origin referrer policy
++  switch (render_prefs.cross_origin_referrer_policy) {
++    case network::mojom::CrossOriginReferrerPolicy::kDefault:
++      break;
++    case network::mojom::CrossOriginReferrerPolicy::kReduce: {
++      if (!referrer->url.is_empty() &&
++          !url::IsSameOriginWith(url, referrer->url)) {
++        auto capped_referrer = url::Origin::Create(referrer->url);
++        *referrer = blink::mojom::Referrer(capped_referrer.GetURL(),
++            network::mojom::ReferrerPolicy::kOriginWhenCrossOrigin);
++      }
++      break;
++    }
++    case network::mojom::CrossOriginReferrerPolicy::kDisable: {
++      if (!referrer->url.is_empty() &&
++          !url::IsSameOriginWith(url, referrer->url)) {
++        *referrer = blink::mojom::Referrer(GURL(),
++            network::mojom::ReferrerPolicy::kSameOrigin);
++      }
++      break;
++    }
++  }
++
+   // Next, set the HTTP Origin if needed.
+   std::optional<std::string> existing_origin =
+       headers->GetHeader(net::HttpRequestHeaders::kOrigin);
+diff --git a/content/renderer/render_frame_impl.cc b/content/renderer/render_frame_impl.cc
+index 9d3eb74e4d5da..a53716fb0818c 100644
+--- a/content/renderer/render_frame_impl.cc
++++ b/content/renderer/render_frame_impl.cc
+@@ -4603,6 +4603,31 @@ void RenderFrameImpl::FinalizeRequestInternal(
+     request.SetReferrerString(WebString());
+     request.SetReferrerPolicy(network::mojom::ReferrerPolicy::kNever);
+   }
++
++  // Enforce cross-origin referrer policy
++  switch (GetWebView()->GetRendererPreferences().cross_origin_referrer_policy) {
++   case network::mojom::CrossOriginReferrerPolicy::kDefault:
++      break;
++    case network::mojom::CrossOriginReferrerPolicy::kReduce: {
++      GURL referrer_url = GURL(request.ReferrerString().Utf8());
++      if (!referrer_url.is_empty() &&
++          !url::IsSameOriginWith(request.Url(), referrer_url)) {
++        auto capped_referrer = url::Origin::Create(referrer_url);
++        request.SetReferrerString(WebString::FromUtf8(capped_referrer.GetURL().spec()));
++        request.SetReferrerPolicy(network::mojom::ReferrerPolicy::kOriginWhenCrossOrigin);
++      }
++      break;
++    }
++    case network::mojom::CrossOriginReferrerPolicy::kDisable: {
++      GURL referrer_url = GURL(request.ReferrerString().Utf8());
++      if (!referrer_url.is_empty() &&
++          !url::IsSameOriginWith(request.Url(), referrer_url)) {
++        request.SetReferrerString(WebString());
++        request.SetReferrerPolicy(network::mojom::ReferrerPolicy::kSameOrigin);
++      }
++      break;
++    }
++  }
+ }
+ 
+ void RenderFrameImpl::DidLoadResourceFromMemoryCache(
+diff --git a/services/network/network_context.cc b/services/network/network_context.cc
+index 45c0a1a8977ca..63509f07a5c2d 100644
+--- a/services/network/network_context.cc
++++ b/services/network/network_context.cc
+@@ -1880,6 +1880,15 @@ void NetworkContext::SetEnableReferrers(bool enable_referrers) {
+   network_delegate_->set_enable_referrers(enable_referrers);
+ }
+ 
++void NetworkContext::SetCrossOriginReferrerPolicy(
++    mojom::CrossOriginReferrerPolicy cross_origin_referrer_policy) {
++  // This may only be called on NetworkContexts created with the constructor
++  // that calls MakeURLRequestContext().
++  DCHECK(network_delegate_);
++  network_delegate_->set_cross_origin_referrer_policy(
++      cross_origin_referrer_policy);
++}
++
+ #if BUILDFLAG(IS_CT_SUPPORTED)
+ void NetworkContext::SetCTPolicy(mojom::CTPolicyPtr ct_policy) {
+   if (!require_ct_delegate_) {
+@@ -2784,6 +2793,7 @@ URLRequestContextOwner NetworkContext::MakeURLRequestContext(
+   std::unique_ptr<NetworkServiceNetworkDelegate> network_delegate =
+       std::make_unique<NetworkServiceNetworkDelegate>(
+           params_->enable_referrers,
++          params_->cross_origin_referrer_policy,
+           params_->validate_referrer_policy_on_initial_request,
+           std::move(params_->proxy_error_client), this);
+   network_delegate_ = network_delegate.get();
+diff --git a/services/network/network_context.h b/services/network/network_context.h
+index 55fe2d9e3e3a8..fe24bc7580c4d 100644
+--- a/services/network/network_context.h
++++ b/services/network/network_context.h
+@@ -63,6 +63,7 @@
+ #include "services/network/public/mojom/cookie_access_observer.mojom.h"
+ #include "services/network/public/mojom/cookie_manager.mojom-shared.h"
+ #include "services/network/public/mojom/host_resolver.mojom.h"
++#include "services/network/public/mojom/network_context.mojom-shared.h"
+ #include "services/network/public/mojom/network_context.mojom.h"
+ #include "services/network/public/mojom/network_context_client.mojom.h"
+ #include "services/network/public/mojom/network_service.mojom-forward.h"
+@@ -332,6 +333,8 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkContext
+       std::vector<mojom::MatchedNetworkConditionsPtr> conditions) override;
+   void SetAcceptLanguage(const std::string& new_accept_language) override;
+   void SetEnableReferrers(bool enable_referrers) override;
++  void SetCrossOriginReferrerPolicy(
++      mojom::CrossOriginReferrerPolicy cross_origin_referrer_policy) override;
+ #if BUILDFLAG(IS_CT_SUPPORTED)
+   void SetCTPolicy(mojom::CTPolicyPtr ct_policy) override;
+   void MaybeEnqueueSCTReport(
+diff --git a/services/network/network_service_network_delegate.cc b/services/network/network_service_network_delegate.cc
+index 23495e7c92cbd..2e5745c4df0f2 100644
+--- a/services/network/network_service_network_delegate.cc
++++ b/services/network/network_service_network_delegate.cc
+@@ -54,10 +54,12 @@ base::optional_ref<const network::PermissionsPolicy> GetPermissionsPolicy(
+ 
+ NetworkServiceNetworkDelegate::NetworkServiceNetworkDelegate(
+     bool enable_referrers,
++    mojom::CrossOriginReferrerPolicy cross_origin_referrer_policy,
+     bool validate_referrer_policy_on_initial_request,
+     mojo::PendingRemote<mojom::ProxyErrorClient> proxy_error_client_remote,
+     NetworkContext* network_context)
+     : enable_referrers_(enable_referrers),
++      cross_origin_referrer_policy_(cross_origin_referrer_policy),
+       validate_referrer_policy_on_initial_request_(
+           validate_referrer_policy_on_initial_request),
+       network_context_(network_context) {
+@@ -76,12 +78,39 @@ void NetworkServiceNetworkDelegate::MaybeTruncateReferrer(
+     return;
+   }
+ 
++  // Enforce cross-origin referrer policy
++  switch (cross_origin_referrer_policy_) {
++    case mojom::CrossOriginReferrerPolicy::kDefault: {
+   if (base::FeatureList::IsEnabled(
+           net::features::kCapReferrerToOriginOnCrossOrigin)) {
+     if (!url::IsSameOriginWith(effective_url, GURL(request->referrer()))) {
+       auto capped_referrer = url::Origin::Create(GURL(request->referrer()));
+       request->SetReferrer(capped_referrer.GetURL().spec());
+     }
++  }
++      break;
++    }
++    case mojom::CrossOriginReferrerPolicy::kReduce: {
++      GURL referrer_url = GURL(request->referrer());
++      if (!referrer_url.is_empty() &&
++          !url::IsSameOriginWith(effective_url, referrer_url)) {
++        auto capped_referrer = url::Origin::Create(referrer_url);
++        request->SetReferrer(capped_referrer.GetURL().spec());
++        request->set_referrer_policy(
++            net::ReferrerPolicy::REDUCE_GRANULARITY_ON_TRANSITION_CROSS_ORIGIN);
++      }
++      break;
++    }
++    case mojom::CrossOriginReferrerPolicy::kDisable: {
++      GURL referrer_url = GURL(request->referrer());
++      if (!referrer_url.is_empty() &&
++          !url::IsSameOriginWith(effective_url, referrer_url)) {
++        request->SetReferrer(std::string());
++        request->set_referrer_policy(
++            net::ReferrerPolicy::CLEAR_ON_TRANSITION_CROSS_ORIGIN);
++      }
++      break;
++    }
+   }
+ }
+ 
+diff --git a/services/network/network_service_network_delegate.h b/services/network/network_service_network_delegate.h
+index d62856420499e..4bfeda47d9ca2 100644
+--- a/services/network/network_service_network_delegate.h
++++ b/services/network/network_service_network_delegate.h
+@@ -19,6 +19,7 @@
+ #include "net/url_request/url_request.h"
+ #include "services/network/cookie_settings.h"
+ #include "services/network/network_context.h"
++#include "services/network/public/mojom/network_context.mojom-shared.h"
+ 
+ namespace net {
+ class CookieInclusionStatus;
+@@ -34,6 +35,7 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkServiceNetworkDelegate
+   // |network_context| is guaranteed to outlive this class.
+   NetworkServiceNetworkDelegate(
+       bool enable_referrers,
++      mojom::CrossOriginReferrerPolicy cross_origin_referrer_policy,
+       bool validate_referrer_policy_on_initial_request,
+       mojo::PendingRemote<mojom::ProxyErrorClient> proxy_error_client_remote,
+       NetworkContext* network_context);
+@@ -48,6 +50,11 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkServiceNetworkDelegate
+     enable_referrers_ = enable_referrers;
+   }
+ 
++  void set_cross_origin_referrer_policy(
++      mojom::CrossOriginReferrerPolicy cross_origin_referrer_policy) {
++    cross_origin_referrer_policy_ = cross_origin_referrer_policy;
++  }
++
+  private:
+   // net::NetworkDelegateImpl implementation.
+   int OnBeforeURLRequest(net::URLRequest* request,
+@@ -123,6 +130,7 @@ class COMPONENT_EXPORT(NETWORK_SERVICE) NetworkServiceNetworkDelegate
+                              const GURL& effective_url);
+ 
+   bool enable_referrers_;
++  mojom::CrossOriginReferrerPolicy cross_origin_referrer_policy_;
+   bool validate_referrer_policy_on_initial_request_;
+   mojo::Remote<mojom::ProxyErrorClient> proxy_error_client_;
+   raw_ptr<NetworkContext> network_context_;
+diff --git a/services/network/public/mojom/network_context.mojom b/services/network/public/mojom/network_context.mojom
+index 7cb06e6e4667a..4b2f01af2652e 100644
+--- a/services/network/public/mojom/network_context.mojom
++++ b/services/network/public/mojom/network_context.mojom
+@@ -328,6 +328,12 @@ struct NetworkContextFilePaths {
+   bool trigger_migration = false;
+ };
+ 
++enum CrossOriginReferrerPolicy {
++  kDefault,
++  kReduce,
++  kDisable,
++};
++
+ // Socket brokers used by the ClientSocketFactory for client sockets and
+ // SocketFactory for server sockets.
+ [EnableIf=is_win]
+@@ -355,6 +361,10 @@ struct NetworkContextParams {
+   // If false, the referrer of requests is never populated.
+   bool enable_referrers = true;
+ 
++  // Configures what referrers are sent cross-origin.
++  CrossOriginReferrerPolicy cross_origin_referrer_policy =
++      CrossOriginReferrerPolicy.kDefault;
++
+   // If true, requests initiated with referrers that don't match their referrer
+   // policy will fail.
+   bool validate_referrer_policy_on_initial_request = true;
+@@ -1300,6 +1310,10 @@ interface NetworkContext {
+   // If false, the referrer of requests is never populated.
+   SetEnableReferrers(bool enable_referrers);
+ 
++  // Updates the cross-origin referrer policy.
++  SetCrossOriginReferrerPolicy(
++      CrossOriginReferrerPolicy cross_origin_referrer_policy);
++
+   // Updates the CT policy to be used for requests. Only applies if the
+   // NetworkContextParams set enforce_chrome_ct_policy to true.
+   // TODO(rsleevi): Remove this once Chrome-specific policies are moved out
+diff --git a/services/network/test/test_network_context.h b/services/network/test/test_network_context.h
+index bd8e8eddcc1a4..c7ec9ee572439 100644
+--- a/services/network/test/test_network_context.h
++++ b/services/network/test/test_network_context.h
+@@ -157,6 +157,8 @@ class TestNetworkContext : public mojom::NetworkContext {
+       std::vector<mojom::MatchedNetworkConditionsPtr>) override {}
+   void SetAcceptLanguage(const std::string& new_accept_language) override {}
+   void SetEnableReferrers(bool enable_referrers) override {}
++  void SetCrossOriginReferrerPolicy(
++      mojom::CrossOriginReferrerPolicy cross_origin_referrer_policy) override {}
+ #if BUILDFLAG(IS_CT_SUPPORTED)
+   void SetCTPolicy(mojom::CTPolicyPtr ct_policy) override {}
+   void SetSCTAuditingMode(mojom::SCTAuditingMode mode) override {}
+diff --git a/third_party/blink/common/renderer_preferences/renderer_preferences_mojom_traits.cc b/third_party/blink/common/renderer_preferences/renderer_preferences_mojom_traits.cc
+index a42179970119c..01351504ef6ee 100644
+--- a/third_party/blink/common/renderer_preferences/renderer_preferences_mojom_traits.cc
++++ b/third_party/blink/common/renderer_preferences/renderer_preferences_mojom_traits.cc
+@@ -52,6 +52,7 @@ bool StructTraits<blink::mojom::RendererPreferencesDataView,
+ #endif
+ 
+   out->enable_referrers = data.enable_referrers();
++  out->cross_origin_referrer_policy = data.cross_origin_referrer_policy();
+   out->allow_cross_origin_auth_prompt = data.allow_cross_origin_auth_prompt();
+   out->enable_do_not_track = data.enable_do_not_track();
+   out->enable_encrypted_media = data.enable_encrypted_media();
+diff --git a/third_party/blink/public/common/renderer_preferences/renderer_preferences.h b/third_party/blink/public/common/renderer_preferences/renderer_preferences.h
+index 08d068cc0af4e..4b766d835b635 100644
+--- a/third_party/blink/public/common/renderer_preferences/renderer_preferences.h
++++ b/third_party/blink/public/common/renderer_preferences/renderer_preferences.h
+@@ -13,6 +13,7 @@
+ 
+ #include "base/time/time.h"
+ #include "build/build_config.h"
++#include "services/network/public/mojom/network_context.mojom-shared.h"
+ #include "third_party/blink/public/common/common_export.h"
+ #include "third_party/blink/public/common/peerconnection/webrtc_ip_handling_url_entry.h"
+ #include "third_party/blink/public/common/user_agent/user_agent_metadata.h"
+@@ -50,6 +51,9 @@ struct BLINK_COMMON_EXPORT RendererPreferences {
+   std::optional<base::TimeDelta> caret_blink_interval;
+   bool use_custom_colors{true};
+   bool enable_referrers{true};
++  network::mojom::CrossOriginReferrerPolicy cross_origin_referrer_policy {
++      network::mojom::CrossOriginReferrerPolicy::kDefault
++  };
+   bool allow_cross_origin_auth_prompt{false};
+   bool enable_do_not_track{false};
+   bool enable_encrypted_media{true};
+diff --git a/third_party/blink/public/common/renderer_preferences/renderer_preferences_mojom_traits.h b/third_party/blink/public/common/renderer_preferences/renderer_preferences_mojom_traits.h
+index 11270bb1e2293..5eccf8bf7f322 100644
+--- a/third_party/blink/public/common/renderer_preferences/renderer_preferences_mojom_traits.h
++++ b/third_party/blink/public/common/renderer_preferences/renderer_preferences_mojom_traits.h
+@@ -118,6 +118,11 @@ struct BLINK_COMMON_EXPORT
+     return data.enable_referrers;
+   }
+ 
++  static const network::mojom::CrossOriginReferrerPolicy&
++      cross_origin_referrer_policy(const ::blink::RendererPreferences& data) {
++    return data.cross_origin_referrer_policy;
++  }
++
+   static const bool& allow_cross_origin_auth_prompt(
+       const ::blink::RendererPreferences& data) {
+     return data.allow_cross_origin_auth_prompt;
+diff --git a/third_party/blink/public/mojom/renderer_preferences.mojom b/third_party/blink/public/mojom/renderer_preferences.mojom
+index aa6d396335d33..8be2421555937 100644
+--- a/third_party/blink/public/mojom/renderer_preferences.mojom
++++ b/third_party/blink/public/mojom/renderer_preferences.mojom
+@@ -6,6 +6,7 @@ module blink.mojom;
+ 
+ import "mojo/public/mojom/base/string16.mojom";
+ import "mojo/public/mojom/base/time.mojom";
++import "services/network/public/mojom/network_context.mojom";
+ import "third_party/blink/public/mojom/peerconnection/webrtc_ip_handling_policy.mojom";
+ import "third_party/blink/public/mojom/user_agent/user_agent_metadata.mojom";
+ import "ui/gfx/mojom/font_render_params.mojom";
+@@ -82,6 +83,10 @@ struct RendererPreferences {
+   // Set to false to not send referrers.
+   bool enable_referrers = true;
+ 
++  // Configures what referrers are sent cross-origin
++  network.mojom.CrossOriginReferrerPolicy cross_origin_referrer_policy =
++      network.mojom.CrossOriginReferrerPolicy.kDefault;
++
+   // Set to true to allow third-party sub-content to pop-up HTTP basic auth
+   // dialog boxes.
+   bool allow_cross_origin_auth_prompt = false;
+diff --git a/third_party/blink/renderer/modules/service_worker/web_service_worker_fetch_context_impl.cc b/third_party/blink/renderer/modules/service_worker/web_service_worker_fetch_context_impl.cc
+index 080b9b445198b..88d4813c2f78a 100644
+--- a/third_party/blink/renderer/modules/service_worker/web_service_worker_fetch_context_impl.cc
++++ b/third_party/blink/renderer/modules/service_worker/web_service_worker_fetch_context_impl.cc
+@@ -21,6 +21,7 @@
+ #include "third_party/blink/public/platform/websocket_handshake_throttle_provider.h"
+ #include "third_party/blink/renderer/platform/accept_languages_watcher.h"
+ #include "third_party/blink/renderer/platform/loader/fetch/url_loader/url_loader_factory.h"
++#include "third_party/blink/renderer/platform/weborigin/kurl.h"
+ 
+ namespace blink {
+ 
+@@ -159,6 +160,33 @@ void WebServiceWorkerFetchContextImpl::FinalizeRequest(WebURLRequest& request) {
+     request.SetReferrerString(WebString());
+     request.SetReferrerPolicy(network::mojom::ReferrerPolicy::kNever);
+   }
++
++  // Enforce cross-origin referrer policy
++  switch (renderer_preferences_.cross_origin_referrer_policy) {
++    case network::mojom::CrossOriginReferrerPolicy::kDefault:
++      break;
++    case network::mojom::CrossOriginReferrerPolicy::kReduce: {
++      KURL referrerUrl = KURL(request.ReferrerString());
++      if (!referrerUrl.IsEmpty() &&
++          !SecurityOrigin::AreSameOrigin(request.Url(), referrerUrl)) {
++        String originUrl = String(
++            SecurityOrigin::Create(referrerUrl)->ToUrlOrigin().GetURL().spec());
++        request.SetReferrerString(originUrl);
++        request.SetReferrerPolicy(
++            network::mojom::ReferrerPolicy::kOriginWhenCrossOrigin);
++      }
++      break;
++    }
++    case network::mojom::CrossOriginReferrerPolicy::kDisable: {
++      KURL referrerUrl = KURL(request.ReferrerString());
++      if (!referrerUrl.IsEmpty() &&
++          !SecurityOrigin::AreSameOrigin(request.Url(), referrerUrl)) {
++        request.SetReferrerString(WebString());
++        request.SetReferrerPolicy(network::mojom::ReferrerPolicy::kSameOrigin);
++      }
++      break;
++    }
++  }
+ }
+ 
+ std::vector<std::unique_ptr<URLLoaderThrottle>>
+diff --git a/third_party/blink/renderer/platform/loader/fetch/url_loader/dedicated_or_shared_worker_global_scope_context_impl.cc b/third_party/blink/renderer/platform/loader/fetch/url_loader/dedicated_or_shared_worker_global_scope_context_impl.cc
+index e0e9af90a35fd..ad995bb660da0 100644
+--- a/third_party/blink/renderer/platform/loader/fetch/url_loader/dedicated_or_shared_worker_global_scope_context_impl.cc
++++ b/third_party/blink/renderer/platform/loader/fetch/url_loader/dedicated_or_shared_worker_global_scope_context_impl.cc
+@@ -32,6 +32,7 @@
+ #include "third_party/blink/renderer/platform/accept_languages_watcher.h"
+ #include "third_party/blink/renderer/platform/loader/fetch/url_loader/url_loader.h"
+ #include "third_party/blink/renderer/platform/loader/fetch/url_loader/url_loader_factory.h"
++#include "third_party/blink/renderer/platform/weborigin/kurl.h"
+ #include "url/url_constants.h"
+ 
+ namespace blink {
+@@ -385,6 +386,33 @@ void DedicatedOrSharedWorkerGlobalScopeContextImpl::FinalizeRequest(
+     request.SetReferrerString(WebString());
+     request.SetReferrerPolicy(network::mojom::ReferrerPolicy::kNever);
+   }
++
++  // Enforce cross-origin referrer policy
++  switch (renderer_preferences_.cross_origin_referrer_policy) {
++    case network::mojom::CrossOriginReferrerPolicy::kDefault:
++      break;
++    case network::mojom::CrossOriginReferrerPolicy::kReduce: {
++      KURL referrerUrl = KURL(request.ReferrerString());
++      if (!referrerUrl.IsEmpty() &&
++          !SecurityOrigin::AreSameOrigin(request.Url(), referrerUrl)) {
++        String originUrl = String(
++            SecurityOrigin::Create(referrerUrl)->ToUrlOrigin().GetURL().spec());
++        request.SetReferrerString(originUrl);
++        request.SetReferrerPolicy(
++            network::mojom::ReferrerPolicy::kOriginWhenCrossOrigin);
++      }
++      break;
++    }
++    case network::mojom::CrossOriginReferrerPolicy::kDisable: {
++      KURL referrerUrl = KURL(request.ReferrerString());
++      if (!referrerUrl.IsEmpty() &&
++          !SecurityOrigin::AreSameOrigin(request.Url(), referrerUrl)) {
++        request.SetReferrerString(WebString());
++        request.SetReferrerPolicy(network::mojom::ReferrerPolicy::kSameOrigin);
++      }
++      break;
++    }
++  }
+ }
+ 
+ std::vector<std::unique_ptr<URLLoaderThrottle>>
