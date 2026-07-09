@@ -14,13 +14,15 @@ diff --git a/chrome/browser/extensions/api/settings_private/prefs_util.cc b/chro
 index ab19b6cb94e9d..b9f99abf97a1c 100644
 --- a/chrome/browser/extensions/api/settings_private/prefs_util.cc
 +++ b/chrome/browser/extensions/api/settings_private/prefs_util.cc
-@@ -182,6 +182,24 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
+@@ -182,6 +182,26 @@ const PrefsUtil::TypedPrefMap& PrefsUtil::GetAllowlistedKeys() {
    }
    s_allowlist = new PrefsUtil::TypedPrefMap();
  
 +  // Trivalent
 +  (*s_allowlist)[::prefs::kWebRTCIPHandlingPolicy] =
 +      settings_api::PrefType::kString;
++  (*s_allowlist)[::prefs::kCrossOriginReferrerPolicy] =
++      settings_api::PrefType::kInteger;
 +  (*s_allowlist)[::prefs::kPrintingEnabled] =
 +      settings_api::PrefType::kBoolean;
 +  (*s_allowlist)[::prefs::kDisable3DAPIs] =
