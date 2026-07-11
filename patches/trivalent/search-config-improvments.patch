@@ -37,7 +37,6 @@ index e723790d47..a85cd36e38 100644
          break;
        }
  
-
 diff --git a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
 index 0865e26..71e9c57 100644
 --- a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
