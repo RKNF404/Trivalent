@@ -70,16 +70,3 @@ index 0865e26..71e9c57 100644
        "id": 1
      },
  
-@@ -428,8 +417,10 @@
-       "keyword": "startpage.com",
-       "favicon_url": "https://www.startpage.com/favicon.ico",
-       "base_builtin_resource_id": "SEARCH_ENGINE_STARTPAGE",
--      "search_url": "https://www.startpage.com/sp/search?q={searchTerms}",
--      "suggest_url": "https://www.startpage.com/osuggestions?q={searchTerms}",
-+      "search_url": "https://www.startpage.com/sp/search",
-+      "suggest_url": "https://www.startpage.com/osuggestions",
-+      "search_url_post_params": "q={searchTerms}",
-+      "suggest_url_post_params": "q={searchTerms}",
-       "type": "SEARCH_ENGINE_STARTPAGE",
-       "id": 113
-     },
