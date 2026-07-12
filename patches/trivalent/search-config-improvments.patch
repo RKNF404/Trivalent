@@ -10,6 +10,33 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
+diff --git a/components/search_engines/template_url.cc b/components/search_engines/template_url.cc
+index e723790d47..a85cd36e38 100644
+--- a/components/search_engines/template_url.cc
++++ b/components/search_engines/template_url.cc
+@@ -1418,22 +1418,6 @@ std::string TemplateURLRef::HandleReplacements(
+ 
+       case GOOGLE_SEARCH_SOURCE: {
+         DCHECK(!replacement.is_post_param);
+-        using OEP = ::metrics::OmniboxEventProto;
+-        std::string source_param;
+-        const auto pc = search_terms_args.page_classification;
+-        if (pc == OEP::NTP ||
+-            pc == OEP::INSTANT_NTP_WITH_OMNIBOX_AS_STARTING_FOCUS ||
+-            pc == OEP::SEARCH_RESULT_PAGE_NO_SEARCH_TERM_REPLACEMENT ||
+-            pc == OEP::SEARCH_RESULT_PAGE_DOING_SEARCH_TERM_REPLACEMENT ||
+-            pc == OEP::SEARCH_RESULT_PAGE_ON_CCT ||
+-            pc == OEP::SRP_ZPS_PREFETCH || pc == OEP::OTHER) {
+-          source_param = "chrome.ob";
+-        } else if (pc == OEP::NTP_REALBOX) {
+-          source_param = "chrome.rb";
+-        }
+-        if (!source_param.empty()) {
+-          HandleReplacement("source", source_param, replacement, &url);
+-        }
+         break;
+       }
+ 
 diff --git a/definitions/prepopulated_engines.json b/definitions/prepopulated_engines.json
 index 0865e26..13d3100 100644
 --- a/definitions/prepopulated_engines.json
