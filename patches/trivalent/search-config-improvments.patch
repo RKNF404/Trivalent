@@ -10,10 +10,10 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
-diff --git a/definitions/prepopulated_engines.json b/definitions/prepopulated_engines.json
+diff --git a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
 index 0865e26..3e59664 100644
---- a/definitions/prepopulated_engines.json
-+++ b/definitions/prepopulated_engines.json
+--- a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
++++ b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
 @@ -22,7 +22,7 @@
      // use a lower number. This number is used by UMA stats and must be updated
      // to include the full range or else not all engines will be counted in
