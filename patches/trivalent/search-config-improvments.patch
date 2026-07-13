@@ -23,10 +23,10 @@ index 23c3c13f2f..7cb86e30e4 100644
                                          /*use_first_as_fallback=*/true);
  }
  
-diff --git a/definitions/prepopulated_engines.json b/definitions/prepopulated_engines.json
+diff --git a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
 index 0865e26..13d3100 100644
---- a/definitions/prepopulated_engines.json
-+++ b/definitions/prepopulated_engines.json
+--- a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
++++ b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
 @@ -22,7 +22,7 @@
      // use a lower number. This number is used by UMA stats and must be updated
      // to include the full range or else not all engines will be counted in
@@ -85,10 +85,10 @@ index 0865e26..13d3100 100644
  
      "info_com": {
        "name": "Info.com",
-diff --git a/definitions/regional_settings.json b/definitions/regional_settings.json
+diff --git a/third_party/search_engines_data/resources/definitions/regional_settings.json b/third_party/search_engines_data/resources/definitions/regional_settings.json
 index b73c17e..cd036f8 100644
---- a/definitions/regional_settings.json
-+++ b/definitions/regional_settings.json
+--- a/third_party/search_engines_data/resources/definitions/regional_settings.json
++++ b/third_party/search_engines_data/resources/definitions/regional_settings.json
 @@ -154,6 +154,8 @@
      "AE": {
        "search_engines": [
