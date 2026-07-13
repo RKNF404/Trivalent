@@ -10,10 +10,10 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
-diff --git a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
-index 0865e26..13d3100 100644
---- a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
-+++ b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
+diff --git a/definitions/prepopulated_engines.json b/definitions/prepopulated_engines.json
+index 0865e26..3e59664 100644
+--- a/definitions/prepopulated_engines.json
++++ b/definitions/prepopulated_engines.json
 @@ -22,7 +22,7 @@
      // use a lower number. This number is used by UMA stats and must be updated
      // to include the full range or else not all engines will be counted in
@@ -23,7 +23,7 @@ index 0865e26..13d3100 100644
  
      // Increment this if you change the data in ways that mean users with
      // existing data should get a new version. Otherwise, existing data may
-@@ -170,31 +170,33 @@,
+@@ -176,15 +176,13 @@
        "keyword": "google.com",
        "favicon_url": "https://www.google.com/images/branding/product/ico/googleg_alldp.ico",
        "base_builtin_resource_id": "SEARCH_ENGINE_GOOGLE",
@@ -38,13 +38,12 @@ index 0865e26..13d3100 100644
        "image_translate_source_language_param_key": "sourcelang",
        "image_translate_target_language_param_key": "targetlang",
 -      "search_intent_params": ["si", "gs_ssp", "udm"],
--      "alternate_urls": [
--        "{google:baseURL}#q={searchTerms}",
--        "{google:baseURL}search#q={searchTerms}",
--        "{google:baseURL}webhp#q={searchTerms}",
--        "{google:baseURL}s#q={searchTerms}",
--        "{google:baseURL}s?q={searchTerms}"
--      ],
+       "alternate_urls": [
+         "{google:baseURL}#q={searchTerms}",
+         "{google:baseURL}search#q={searchTerms}",
+@@ -193,11 +191,23 @@
+         "{google:baseURL}s?q={searchTerms}"
+       ],
        "type": "SEARCH_ENGINE_GOOGLE",
 -      "preconnect_to_search_url" : "ALLOWED",
 -      "prefetch_likely_navigations" : "ALLOWED",
@@ -52,9 +51,10 @@ index 0865e26..13d3100 100644
        "id": 1
      },
 +    "googleweb": {
-+      "name": "Google",
++      "name": "Google (No AI)",
 +      "keyword": "google",
 +      "favicon_url": "https://www.google.com/images/branding/product/ico/googleg_alldp.ico",
++      "base_builtin_resource_id": "SEARCH_ENGINE_GOOGLE",
 +      "search_url": "{google:baseURL}search?q={searchTerms}&ie={inputEncoding}&udm=14",
 +      "suggest_url": "{google:baseSuggestURL}{google:suggestPath}?xssi=t&q={searchTerms}",
 +      "image_url": "{google:baseSearchByImageURL}upload",
@@ -77,7 +77,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_ru",
@@ -86,7 +86,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_tr",
@@ -95,7 +95,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_ar",
          "&duckduckgo",
@@ -104,7 +104,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&ecosia",
@@ -113,7 +113,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_au",
          "&duckduckgo",
@@ -122,7 +122,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_com",
@@ -131,7 +131,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&ecosia",
@@ -140,7 +140,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -149,7 +149,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_com",
@@ -158,7 +158,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_ru",
@@ -167,7 +167,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -176,7 +176,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_com",
@@ -185,7 +185,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_br",
          "&duckduckgo",
@@ -194,7 +194,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&yandex_by",
          "&bing",
          "&duckduckgo",
@@ -203,7 +203,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&duckduckgo",
          "&yahoo",
@@ -212,7 +212,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_ca",
          "&duckduckgo",
@@ -221,7 +221,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&duckduckgo",
          "&yahoo_ch",
@@ -230,7 +230,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_cl",
          "&duckduckgo",
@@ -239,7 +239,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_co",
          "&duckduckgo",
@@ -248,7 +248,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -257,7 +257,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -266,7 +266,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&seznam",
          "&brave",
          "&duckduckgo",
@@ -275,7 +275,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&duckduckgo",
          "&brave",
          "&ecosia",
@@ -289,7 +289,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -298,7 +298,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -307,7 +307,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_fr",
          "&yandex_com",
@@ -316,7 +316,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_es",
          "&duckduckgo",
@@ -325,7 +325,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -334,7 +334,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_com",
@@ -343,7 +343,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -352,7 +352,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -361,7 +361,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_uk",
          "&duckduckgo",
@@ -370,7 +370,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&ecosia",
          "&qwant",
@@ -379,7 +379,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_uk",
          "&duckduckgo",
@@ -388,7 +388,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -397,7 +397,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -406,7 +406,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_hk",
          "&baidu",
@@ -415,7 +415,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -424,7 +424,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -433,7 +433,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&bing",
          "&duckduckgo",
@@ -442,7 +442,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&yandex_com",
          "&bing",
          "&yahoo_id",
@@ -451,7 +451,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&duckduckgo",
          "&brave",
          "&bing",
@@ -460,7 +460,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yandex_ru",
          "&yahoo",
@@ -469,7 +469,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_in",
          "&duckduckgo",
@@ -478,7 +478,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yandex_tr",
          "&yahoo",
@@ -487,7 +487,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -496,7 +496,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&duckduckgo",
          "&brave",
          "&bing",
@@ -505,7 +505,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&bing",
          "&duckduckgo",
@@ -514,7 +514,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -523,7 +523,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_com",
@@ -532,7 +532,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&yahoo_jp",
          "&bing",
          "&duckduckgo",
@@ -541,7 +541,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -550,7 +550,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&naver",
          "&bing",
          "&daum",
@@ -559,7 +559,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yandex_tr",
          "&yahoo",
@@ -568,7 +568,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&yandex_kz",
          "&bing",
          "&mail_ru",
@@ -577,7 +577,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -586,7 +586,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&duckduckgo",
          "&brave",
          "&bing",
@@ -600,7 +600,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -609,7 +609,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -618,7 +618,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -627,7 +627,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yandex_tr",
          "&yahoo",
@@ -636,7 +636,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_fr",
          "&yandex_com",
@@ -645,7 +645,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_fr",
          "&duckduckgo",
@@ -654,7 +654,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&yandex_ru",
          "&bing",
          "&duckduckgo",
@@ -663,7 +663,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yandex_ru",
          "&yahoo",
@@ -672,7 +672,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_com",
@@ -681,7 +681,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&bing",
          "&duckduckgo",
@@ -690,7 +690,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_mx",
          "&duckduckgo",
@@ -699,7 +699,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_my",
          "&yandex_com",
@@ -708,7 +708,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -717,7 +717,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&duckduckgo",
          "&brave",
          "&bing",
@@ -726,7 +726,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&duckduckgo",
          "&brave",
          "&bing",
@@ -735,7 +735,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_nz",
          "&duckduckgo",
@@ -744,7 +744,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -753,7 +753,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_es",
          "&duckduckgo",
@@ -762,7 +762,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_pe",
          "&yandex_com",
@@ -771,7 +771,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_ph",
          "&ecosia",
@@ -780,7 +780,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -789,7 +789,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -798,7 +798,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -807,7 +807,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&bing",
          "&duckduckgo",
@@ -816,7 +816,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_es",
          "&duckduckgo",
@@ -825,7 +825,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -834,7 +834,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -843,7 +843,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&yandex_ru",
@@ -852,7 +852,7 @@ index b73c17e..cd036f8 100644
          "&yandex_ru",
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&duckduckgo",
          "&mail_ru"
@@ -861,7 +861,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -870,7 +870,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yandex_com",
          "&yahoo",
@@ -879,7 +879,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&duckduckgo",
          "&brave",
          "&bing",
@@ -888,7 +888,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_sg",
          "&duckduckgo",
@@ -897,7 +897,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -906,7 +906,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&brave",
          "&duckduckgo",
          "&bing",
@@ -915,7 +915,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_es",
          "&duckduckgo",
@@ -924,7 +924,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yandex_ru",
          "&yahoo",
@@ -933,7 +933,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_th",
          "&yandex_com",
@@ -942,7 +942,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_fr",
          "&yandex_com",
@@ -951,7 +951,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&yandex_tr",
          "&yahoo_tr",
          "&bing",
@@ -960,7 +960,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -969,7 +969,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&yahoo_tw",
          "&bing",
          "&coccoc",
@@ -978,7 +978,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&duckduckgo",
          "&bing",
          "&yahoo",
@@ -987,7 +987,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&yandex_ru",
          "&bing",
          "&duckduckgo",
@@ -996,7 +996,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -1005,7 +1005,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_es",
          "&duckduckgo",
@@ -1014,7 +1014,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo_es",
          "&duckduckgo",
@@ -1023,7 +1023,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&coccoc",
          "&yahoo",
          "&bing",
@@ -1032,7 +1032,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -1041,7 +1041,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -1050,7 +1050,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo",
          "&duckduckgo",
@@ -1059,7 +1059,7 @@ index b73c17e..cd036f8 100644
        "search_engines": [
          "&google",
 +        "&startpage",
-+        "&googledefault",
++        "&googleweb",
          "&bing",
          "&yahoo"
        ]
