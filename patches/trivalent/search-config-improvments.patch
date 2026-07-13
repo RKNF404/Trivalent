@@ -26,8 +26,9 @@ index 0865e26..13d3100 100644
 @@ -173,31 +173,33 @@
  
      "google": {
-       "name": "Google (Web)",
+-      "name": "Google",
 -      "keyword": "google.com",
++      "name": "Google (Web)",
 +      "keyword": "google",
        "favicon_url": "https://www.google.com/images/branding/product/ico/googleg_alldp.ico",
        "base_builtin_resource_id": "SEARCH_ENGINE_GOOGLE",
