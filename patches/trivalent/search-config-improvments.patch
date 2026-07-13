@@ -26,7 +26,7 @@ index 0865e26..13d3100 100644
 @@ -173,31 +173,33 @@
  
      "google": {
-       "name": "Google",
+       "name": "Google (Web)",
 -      "keyword": "google.com",
 +      "keyword": "google",
        "favicon_url": "https://www.google.com/images/branding/product/ico/googleg_alldp.ico",
@@ -56,7 +56,7 @@ index 0865e26..13d3100 100644
        "id": 1
      },
 +    "googledefault": {
-+      "name": "Google (Default)",
++      "name": "Google",
 +      "keyword": "google.com",
 +      "favicon_url": "https://www.google.com/images/branding/product/ico/googleg_alldp.ico",
 +      "search_url": "{google:baseURL}search?q={searchTerms}&ie={inputEncoding}",
