@@ -23,18 +23,13 @@ index 0865e26..13d3100 100644
  
      // Increment this if you change the data in ways that mean users with
      // existing data should get a new version. Otherwise, existing data may
-@@ -173,31 +173,33 @@
- 
-     "google": {
--      "name": "Google",
--      "keyword": "google.com",
-+      "name": "Google (Web)",
-+      "keyword": "google",
+@@ -170,31 +170,33 @@,
+       "keyword": "google.com",
        "favicon_url": "https://www.google.com/images/branding/product/ico/googleg_alldp.ico",
        "base_builtin_resource_id": "SEARCH_ENGINE_GOOGLE",
 -      "search_url": "{google:baseURL}search?q={searchTerms}&{google:RLZ}{google:originalQueryForSuggestion}{google:assistedQueryStats}{google:searchFieldtrialParameter}{google:language}{google:prefetchSource}{google:searchClient}{google:sourceId}{google:searchSource}{google:contextualSearchVersion}ie={inputEncoding}",
 -      "suggest_url": "{google:baseSuggestURL}{google:suggestPath}?{google:searchFieldtrialParameter}client={google:suggestClient}&gs_ri={google:suggestRid}&xssi=t&q={searchTerms}&{google:inputType}{google:omniboxFocusType}{google:cursorPosition}{google:currentPageUrl}{google:pageClassification}{google:clientCacheTimeToLive}{google:searchVersion}{google:sessionToken}{google:prefetchQuery}sugkey={google:suggestAPIKeyParameter}",
-+      "search_url": "{google:baseURL}search?q={searchTerms}&ie={inputEncoding}&udm=14",
++      "search_url": "{google:baseURL}search?q={searchTerms}&ie={inputEncoding}",
 +      "suggest_url": "{google:baseSuggestURL}{google:suggestPath}?xssi=t&q={searchTerms}",
        "image_url": "{google:baseSearchByImageURL}upload",
        "image_translate_url": "{google:baseSearchByImageURL}upload?filtertype=tr&{imageTranslateSourceLocale}{imageTranslateTargetLocale}",
@@ -56,11 +51,11 @@ index 0865e26..13d3100 100644
 -      "send_x_geo_header": true,
        "id": 1
      },
-+    "googledefault": {
++    "googleweb": {
 +      "name": "Google",
-+      "keyword": "google.com",
++      "keyword": "google",
 +      "favicon_url": "https://www.google.com/images/branding/product/ico/googleg_alldp.ico",
-+      "search_url": "{google:baseURL}search?q={searchTerms}&ie={inputEncoding}",
++      "search_url": "{google:baseURL}search?q={searchTerms}&ie={inputEncoding}&udm=14",
 +      "suggest_url": "{google:baseSuggestURL}{google:suggestPath}?xssi=t&q={searchTerms}",
 +      "image_url": "{google:baseSearchByImageURL}upload",
 +      "image_translate_url": "{google:baseSearchByImageURL}upload?filtertype=tr&{imageTranslateSourceLocale}{imageTranslateTargetLocale}",
