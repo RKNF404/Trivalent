@@ -30,7 +30,7 @@ index f477aa7fa2..d85a5f350f 100644
  #if !BUILDFLAG(IS_ANDROID)
  const FeatureEntry::Choice kIwaKeyDistributionComponentExpCohortChoices[] = {
      {flags_ui::kGenericExperimentChoiceDisabled, "", ""},
-@@ -4726,6 +4735,82 @@ const FeatureEntry::FeatureVariation kToolbarGlowUpVariations[] = {
+@@ -4726,6 +4735,78 @@ const FeatureEntry::FeatureVariation kToolbarGlowUpVariations[] = {
  //
  // When adding a new choice, add it to the end of the list.
  const FeatureEntry kFeatureEntries[] = {
@@ -44,10 +44,6 @@ index f477aa7fa2..d85a5f350f 100644
 +     "by default. This feature is provided by Trivalent.",
 +     kOsLinux,
 +     FEATURE_VALUE_TYPE(views::features::kMiddleClickCopyPaste)},
-+    {"enable-tab-scroll", "Enable Tab Scrolling",
-+     "Enables tab scrolling on horizonal tabs. This flag is provided by "
-+     "Trivalent via Ungoogled Chromium.", kOsLinux,
-+     SINGLE_VALUE_TYPE("scroll-tabs")},
 +    {"scope-omnibox-autocomplete", "Scope Omnibox Autocomplete",
 +     "Limit the scope categories of results that omnibox autocomplete can "
 +     "show. This flag is provided by Trivalent via Ungoogled Chromium.",
