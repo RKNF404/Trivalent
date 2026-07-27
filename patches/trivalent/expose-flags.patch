@@ -14,7 +14,7 @@ diff --git a/chrome/browser/about_flags.cc b/chrome/browser/about_flags.cc
 index bdfa3ed504..9478ea82bc 100644
 --- a/chrome/browser/about_flags.cc
 +++ b/chrome/browser/about_flags.cc
-@@ -4824,6 +4824,78 @@ const FeatureEntry::FeatureVariation kSigninPromoOnAvatarPillVariation[] = {
+@@ -4824,6 +4824,82 @@ const FeatureEntry::FeatureVariation kSigninPromoOnAvatarPillVariation[] = {
  //
  // When adding a new choice, add it to the end of the list.
  const FeatureEntry kFeatureEntries[] = {
@@ -32,6 +32,10 @@ index bdfa3ed504..9478ea82bc 100644
 +     "Enables tab scrolling on horizonal tabs. This flag is provided by "
 +     "Trivalent via Ungoogled Chromium.", kOsLinux,
 +     SINGLE_VALUE_TYPE("scroll-tabs")},
++    {"scope-omnibox-autocomplete", "Scope Omnibox Autocomplete",
++     "Limit the scope of results that omnibox autocomplete can show. This "
++     "flag is provided by Trivalent via Ungoogled Chromium.", kOsAll,
++     MULTI_VALUE_TYPE(kOmniboxAutocompleteFiltering)},
 +    {"show-punycode-domains", "Show punycode for IDN domains",
 +     "Shows punycode for IDN domains to mitigate IDN homograph attacks. "
 +     "Disabled by default. This feature is provided by Trivalent.",
