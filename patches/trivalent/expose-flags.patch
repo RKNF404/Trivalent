@@ -18,14 +18,14 @@ index f477aa7fa2..d85a5f350f 100644
       variations::switches::kEnableFieldTrialTestingConfig},
  };
  
-+const char kOmniboxAutocompleteFiltering[] = "omnibox-autocomplete-filtering";
++const char kScopeOmniboxAutocomplete[] = "scope-omnibox-autocomplete";
 +
-+const FeatureEntry::Choice kOmniboxAutocompleteFilteringChoices[] = {
++const FeatureEntry::Choice kkScopeOmniboxAutocompleteChoices[] = {
 +    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
-+    {"Search Only", kOmniboxAutocompleteFiltering, "search"},
-+    {"Search and Bookmarks", kOmniboxAutocompleteFiltering, "search-bookmarks"},
-+    {"Search and Chrome Pages", kOmniboxAutocompleteFiltering, "search-chrome"},
-+    {"Search, Bookmarks, and Chrome Pages", kOmniboxAutocompleteFiltering, "search-bookmarks-chrome"}};
++    {"Search Only", kScopeOmniboxAutocomplete, "search"},
++    {"Search and Bookmarks", kScopeOmniboxAutocomplete, "search,bookmarks"},
++    {"Search and Chrome Pages", kScopeOmniboxAutocomplete, "search,chrome"},
++    {"Search, Bookmarks, and Chrome Pages", kScopeOmniboxAutocomplete, "search,bookmarks,chrome"}};
 +
  #if !BUILDFLAG(IS_ANDROID)
  const FeatureEntry::Choice kIwaKeyDistributionComponentExpCohortChoices[] = {
@@ -49,9 +49,9 @@ index f477aa7fa2..d85a5f350f 100644
 +     "Trivalent via Ungoogled Chromium.", kOsLinux,
 +     SINGLE_VALUE_TYPE("scroll-tabs")},
 +    {"scope-omnibox-autocomplete", "Scope Omnibox Autocomplete",
-+     "Limit the scope of results that omnibox autocomplete can show. This "
-+     "flag is provided by Trivalent via Ungoogled Chromium.", kOsAll,
-+     MULTI_VALUE_TYPE(kOmniboxAutocompleteFilteringChoices)},
++     "Limit the scope categories of results that omnibox autocomplete can "
++     "show. This flag is provided by Trivalent via Ungoogled Chromium.",
++     kOsAll, MULTI_VALUE_TYPE(kScopeOmniboxAutocompleteChoices)},
 +    {"show-punycode-domains", "Show punycode for IDN domains",
 +     "Shows punycode for IDN domains to mitigate IDN homograph attacks. "
 +     "Disabled by default. This feature is provided by Trivalent.",
