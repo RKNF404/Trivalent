@@ -10,7 +10,7 @@ index 22af8003c7..54c42a6871 100644
  #include "base/feature_list.h"
  #include "base/format_macros.h"
  #include "base/functional/bind.h"
-@@ -549,6 +551,19 @@ AutocompleteController::AutocompleteController(
+@@ -549,6 +550,19 @@ AutocompleteController::AutocompleteController(
            metrics::OmniboxEventProto::UNKNOWN_POSITION),
        config_(config) {
    config_.provider_types &= ~OmniboxFieldTrial::GetDisabledProviderTypes();
