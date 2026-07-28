@@ -20,7 +20,7 @@ index f477aa7fa2..d85a5f350f 100644
  
 +const char kScopeOmniboxAutocomplete[] = "scope-omnibox-autocomplete";
 +
-+const FeatureEntry::Choice kkScopeOmniboxAutocompleteChoices[] = {
++const FeatureEntry::Choice kScopeOmniboxAutocompleteChoices[] = {
 +    {flags_ui::kGenericExperimentChoiceDefault, "", ""},
 +    {"Search Only", kScopeOmniboxAutocomplete, "search"},
 +    {"Search and Bookmarks", kScopeOmniboxAutocomplete, "search,bookmarks"},
