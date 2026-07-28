@@ -70,7 +70,7 @@ diff --git a/components/url_formatter/url_fixer.cc b/components/url_formatter/ur
 index d5d9a14c8d..6875acd917 100644
 --- a/components/url_formatter/url_fixer.cc
 +++ b/components/url_formatter/url_fixer.cc
-@@ -10,6 +10,7 @@
+@@ -10,6 +10,8 @@
  #include <string_view>
  
  #include "base/check_op.h"
