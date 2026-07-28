@@ -25,7 +25,7 @@ A security-focused, Chromium-based browser for desktop Linux inspired by [Vanadi
 - Minor user experience (UX) or usability improvements following these guidelines:
   - UX improvements that simply toggle or augment existing browser elements
   - No overhauls/reworks of existing functionality
-  - Keeping changes minimal and easily toggle-able
+  - Keeping changes minimal and easily toggleable
 
 ### Out of scope
 
