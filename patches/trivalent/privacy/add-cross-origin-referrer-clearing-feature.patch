@@ -19,7 +19,7 @@ index 2d22050c0b..a7a4349df2 100644
  namespace net::features {
 
 +BASE_FEATURE(kDisableCrossOriginReferrers,
-+              base::FEATURE_DISABLED_BY_DEFAULT);
++             base::FEATURE_DISABLED_BY_DEFAULT);
 +
 +BASE_FEATURE(kCapReferrerToOriginOnCrossOrigin,
 +             base::FEATURE_ENABLED_BY_DEFAULT);
