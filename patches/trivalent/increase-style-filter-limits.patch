@@ -209,7 +209,7 @@ index 1979d1371a..7f390bb6e1 100644
    raw_ptr<flatbuffers::FlatBufferBuilder> builder_;
  };
 diff --git a/components/subresource_filter/core/common/style_rule_matcher.cc b/components/subresource_filter/core/common/style_rule_matcher.cc
-index 3cb75137d5..89c0e6a25c 100644
+index 3cb75137d5..90baeb414e 100644
 --- a/components/subresource_filter/core/common/style_rule_matcher.cc
 +++ b/components/subresource_filter/core/common/style_rule_matcher.cc
 @@ -48,14 +48,14 @@ void GetSelectorsForName(const flatbuffers::Vector<
@@ -265,6 +265,15 @@ index 3cb75137d5..89c0e6a25c 100644
  
    if (!index_ || !index_->exclusion_map()) {
      return *cached_excluded_indices_;
+@@ -202,7 +202,7 @@ const base::flat_set<uint16_t>& StyleRuleMatcher::GetExcludedIndices(
+   std::string_view host = origin.GetTupleOrPrecursorTupleIfOpaque().host();
+ 
+   const auto* exclusions = index_->exclusion_map();
+-  std::vector<uint16_t> excluded_vector;
++  std::vector<uint32_t> excluded_vector;
+ 
+   // Find excluded selectors for this host, as well as the parent domain suffix.
+   ForEachParentDomain(host, [&](std::string_view sub_host) {
 @@ -212,14 +212,14 @@ const base::flat_set<uint16_t>& StyleRuleMatcher::GetExcludedIndices(
          excluded_vector.emplace_back(entry->first_index());
        }
