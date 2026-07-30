@@ -77,7 +77,7 @@ index e1da11405c..254c14e46f 100644
      }
  
 +    cflags += [ "-ftrivial-auto-var-init=zero" ]
-+    cflags += [ "-fsanitize=implicit-unsigned-integer-truncation", "-fsanitize=unsigned-integer-overflow" ]
++
 +    if (!is_ubsan && !is_ubsan_security) {
 +      cflags += [ "-fwrapv" ]
 +    }
