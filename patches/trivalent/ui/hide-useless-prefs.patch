@@ -104,13 +104,18 @@ index 1ccdc5d82b..c8ce8d033c 100644
 -  </div>
 -</cr-collapse>
 diff --git a/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html b/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
-index 79bdf9e485..1c7a120409 100644
+index 79bdf9e485..56b7e31688 100644
 --- a/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
 +++ b/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
-@@ -117,20 +117,3 @@
-   <collapsible-autofill-settings-card prefs="{{prefs}}">
-   </collapsible-autofill-settings-card>
- </settings-section>
+@@ -112,25 +112,3 @@
+     </div>
+   </template>
+ </div>
+-
+-<settings-section page-title="$i18n{yourSavedInfoAutofillSettingsLabel}">
+-  <collapsible-autofill-settings-card prefs="{{prefs}}">
+-  </collapsible-autofill-settings-card>
+-</settings-section>
 -
 -<settings-section page-title="$i18n{yourSavedInfoRelatedServicesTitle}">
 -  <div route-path="default">
