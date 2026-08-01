@@ -22,6 +22,10 @@ A security-focused, Chromium-based browser for desktop Linux inspired by [Vanadi
 - Changes that increase hardening against known and unknown vulnerabilities
 - Changes that make secondary browser features opt-in instead of opt-out (for example, making the password manager and search suggestions opt-in)
 - Changes that disable opt-in metrics and data collection, so long as they have no security implications
+- Minor user experience (UX) or usability improvements following these guidelines:
+  - UX improvements that simply toggle or augment existing browser elements
+  - No overhauls/reworks of existing functionality
+  - Keeping changes minimal and easily toggleable
 
 ### Out of scope
 
