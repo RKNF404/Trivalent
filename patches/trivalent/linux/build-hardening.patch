@@ -125,6 +125,19 @@ index b8a733f891..fa891fc4eb 100644
      }
 
      if (use_cfi_diag) {
+diff --git a/mojo/core/ipcz_driver/mojo_trap.cc b/mojo/core/ipcz_driver/mojo_trap.cc
+index 9c0f178bb4..4bbb51e81f 100644
+--- a/mojo/core/ipcz_driver/mojo_trap.cc
++++ b/mojo/core/ipcz_driver/mojo_trap.cc
+@@ -594,8 +594,6 @@ void MojoTrap::DispatchOrQueueEvent(Trigger& trigger,
+   }
+ }
+
+-// TODO(crbug.com/458351803): Re-enable the check once CFI is enabled in Rust.
+-NO_SANITIZE("cfi-icall")
+ void MojoTrap::DispatchEvent(const MojoTrapEvent& event) {
+   lock_.AssertAcquired();
+   DCHECK(dispatching_thread_ == base::PlatformThread::CurrentRef());
 diff --git a/tools/cfi/ignores.txt b/tools/cfi/ignores.txt
 index 331d541193..cbe614597e 100644
 --- a/tools/cfi/ignores.txt
