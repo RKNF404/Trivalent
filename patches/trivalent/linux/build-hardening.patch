@@ -125,3 +125,147 @@ index b8a733f891..fa891fc4eb 100644
      }
 
      if (use_cfi_diag) {
+diff --git a/tools/cfi/ignores.txt b/tools/cfi/ignores.txt
+index 331d541193..cbe614597e 100644
+--- a/tools/cfi/ignores.txt
++++ b/tools/cfi/ignores.txt
+@@ -57,9 +57,6 @@ src:*atlcomcli.h
+ # roll in, then remove this. Fires when called from __assume_valid_range.
+ fun:*__assume_aligned*
+
+-# src/base/win/event_trace_provider_unittest.cc
+-type:*EtwTraceProvider*
+-
+ # b/64003142
+ fun:*internal_default_instance*
+
+@@ -103,67 +100,6 @@ fun:*DatabaseContext*contextDestroyed*
+ # so exclude source file for now.
+ src:*lifecycle_observer.h*
+
+-#############################################################################
+-# Methods disabled due to perf considerations.
+-
+-[cfi-vcall]
+-
+-# Skia
+-
+-# https://crbug.com/638056#c1
+-fun:*SkCanvas*onDrawRect*
+-
+-# https://crbug.com/638064
+-fun:*SkCanvas*drawPicture*
+-
+-# https://crbug.com/638060
+-fun:*SkCanvas*onDrawPicture*
+-
+-# https://crbug.com/638064#c2
+-fun:*SkBaseDevice*accessPixels*
+-
+-# https://crbug.com/638056
+-fun:*call_hline_blitter*
+-fun:*do_scanline*
+-fun:*antifilldot8*
+-
+-# Unclear what could be done here
+-fun:*SkCanvas*drawRect*
+-fun:*SkPictureGpuAnalyzer*analyzePicture*
+-fun:*SkScalerContext*MakeRec*
+-
+-# CC
+-
+-# https://crbug.com/638056
+-fun:*LayerTreeHost*NotifySwapPromiseMonitorsOfSetNeedsCommit*
+-
+-# WebKit
+-# The entries below have not been categorized
+-
+-# cc::DisplayItemList::Inputs::~Inputs
+-fun:*cc*DisplayItemList*Inputs*
+-
+-fun:*PaintInvalidationState*computePaintInvalidationRectInBacking*
+-fun:*AdjustAndMarkTrait*mark*
+-fun:*TraceTrait*trace*
+-fun:*ChromeClientImpl*scheduleAnimation*
+-fun:*hasAspectRatio*
+-fun:*nextBreakablePosition*
+-fun:*supportsCachedOffsets*
+-fun:*traceImpl*
+-
+-#############################################################################
+-# Cross-DSO vcalls
+-
+-[cfi-{vcall,unrelated-cast,derived-cast}]
+-
+-# These classes are used to communicate between chrome.exe and
+-# chrome_child.dll (see src/sandbox/win/src/sandbox.h,
+-# src/chrome/app/chrome_main.cc).
+-type:sandbox::BrokerServices
+-type:sandbox::TargetPolicy
+-type:sandbox::TargetServices
+-
+ #############################################################################
+ # Disabled indirect calls
+
+@@ -182,14 +118,6 @@ fun:*GetPCIDevicesWithLibPCI*
+ fun:*GetTraceCategoryEnabledFlag*
+ fun:*AddTraceEvent*
+
+-# dav1d, calls to dav1d shared library from crabbyavif (Rust library). cfi-icall
+-# does not work when the callback is a Rust function and the parameters are
+-# fixed width integer types (or pointers to fixed width integer types).
+-# TODO(crbug.com/40266913): Remove this entry once Rust CFI is built with
+-# -fsanitize-cfi-icall-experimental-normalize-integers and
+-# -Zsanitizer-cfi-normalize-integers.
+-src:*third_party/dav1d/libdav1d/src/ref.c
+-
+ # Dawn, calls to OpenGL and Vulkan function pointers from shared library.
+ src:*third_party/dawn/src/dawn/native/*
+
+@@ -224,27 +152,17 @@ src:*third_party/vulkan-loader/src/loader*
+ src:*third_party/vulkan-validation-layers/src/layers/*
+ src:*third_party/angle/src/common/vulkan/vulkan_icd.cpp
+
+-# Calls to TFLiteDelegate functions in a shared library.
+-src:*services/webnn/tflite/graph_impl_tflite.cc
+-src:*third_party/tflite/src/tensorflow/lite/c/common_internal.cc
+-src:*third_party/tflite/src/tensorflow/lite/core/subgraph.cc
+-src:*third_party/tflite/src/tensorflow/lite/delegates/utils.cc
+-
+ src:*ui/accessibility/platform/browser_accessibility_auralinux.cc
+ src:*ui/accessibility/platform/ax_platform_node_auralinux.cc
+ src:*ui/accessibility/platform/ax_platform_atk_hyperlink.cc
+-src:*ui/accessibility/platform/ax_platform_node_auralinux_unittest.cc
+
+ src:*chrome/browser/ui/zoom/chrome_zoom_level_prefs.cc
+ src:*third_party/webrtc/modules/desktop_capture/linux/x_server_pixel_buffer.cc
+ src:*third_party/webrtc/modules/desktop_capture/linux/x11/x_server_pixel_buffer.cc
+ src:*media/cdm/*
+-src:*third_party/swiftshader/*
+-src:*base/native_library_unittest.cc
+ src:*ui/gtk/app_indicator_icon.cc
+ src:*ui/gtk/unity_service.cc
+ src:*components/cronet/native/*
+-src:*third_party/breakpad/breakpad/src/client/linux/handler/exception_handler_unittest.cc
+
+ # chrome/browser/ui/views/frame/dbus_appmenu.cc
+ fun:*dbus_appmenu*
+@@ -309,18 +227,3 @@ fun:*PendingPhantomCallback*Invoke*
+ fun:*GlobalHandles*PostGarbageCollectionProcessing*
+
+ fun:*InvokeAccessorGetterCallback*
+-
+-# XNNPACK casts incorrect function signature to pthreadpool task type.
+-src:*third_party/pthreadpool/src/src/fastpath.c
+-src:*third_party/pthreadpool/src/src/portable-api.c
+-
+-# Destructor of std::unique_ptr<TfLiteDelegate> calls deleter in dynamically
+-# loaded shared library.
+-fun:*unique_ptr*TfLiteDelegate*
+-
+-# LiteRT: Indirect calls to dynamically loaded LiteRT runtime and accelerators.
+-src:*third_party/litert/*
+-
+-######### Uncategorized
+-
+-src:*native_client/*
