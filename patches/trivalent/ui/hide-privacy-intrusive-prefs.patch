@@ -98,12 +98,17 @@ index d5c37bda84..13e0197694 100644
    glic_disallowed_by_admin = glic_enablement.DisallowedByAdmin();
 
    if (glic_enablement.IsProfileEligible()) {
-@@ -656,7 +648,7 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+@@ -656,10 +656,10 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
 
    // Show the AI features section in the AI page if any of the AI features are
    // enabled.
 -  bool show_ai_features_section = show_ai_settings_for_testing;
 +  bool show_ai_features_section = false;
++
    for (auto [name, visible] : optimization_guide_features) {
-     html_source->AddBoolean(name, visible || show_ai_settings_for_testing);
-     show_ai_features_section |= visible;
+-    html_source->AddBoolean(name, visible || show_ai_settings_for_testing);
+-    show_ai_features_section |= visible;
++    html_source->AddBoolean(name, show_ai_features_section);
+   }
+
+   // Within the AI subpage are separate sections for Glic and for all other AI
