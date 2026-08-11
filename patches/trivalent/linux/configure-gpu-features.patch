@@ -43,17 +43,16 @@ diff --git a/gpu/config/gpu_finch_features.cc b/gpu/config/gpu_finch_features.cc
 index abf7b63a7b..b93c1ce031 100644
 --- a/gpu/config/gpu_finch_features.cc
 +++ b/gpu/config/gpu_finch_features.cc
-@@ -132,7 +132,8 @@ BASE_FEATURE(kNvidiaWaylandYuvHardwareConversionWorkaround,
- // Android and Linux.
- BASE_FEATURE(kDefaultEnableGpuRasterization,
+@@ -278,7 +278,7 @@ BASE_FEATURE(kEnableDrDc,
+ // enabled by default on supported platforms.
  #if BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_WIN) || BUILDFLAG(IS_CHROMEOS) || \
--    BUILDFLAG(IS_ANDROID) || BUILDFLAG(USE_WEBGPU_ON_VULKAN_VIA_GL_INTEROP)
-+    BUILDFLAG(IS_ANDROID) || BUILDFLAG(USE_WEBGPU_ON_VULKAN_VIA_GL_INTEROP) || \
-+    BUILDFLAG(IS_LINUX)
-              base::FEATURE_ENABLED_BY_DEFAULT
+     BUILDFLAG(IS_ANDROID) || BUILDFLAG(USE_WEBGPU_ON_VULKAN_VIA_GL_INTEROP)
+-#define WEBGPU_ENABLED base::FEATURE_ENABLED_BY_DEFAULT
++#define WEBGPU_ENABLED base::FEATURE_DISABLED_BY_DEFAULT
  #else
-              base::FEATURE_DISABLED_BY_DEFAULT
-@@ -169,7 +170,7 @@ BASE_FEATURE(kClearGrShaderDiskCacheOnInvalidPrefix,
+ #define WEBGPU_ENABLED base::FEATURE_DISABLED_BY_DEFAULT
+ #endif
+@@ -169,7 +169,7 @@ BASE_FEATURE(kClearGrShaderDiskCacheOnInvalidPrefix,
  // kill-switch for working around issues with the disk cache and assessing the
  // performance value of the disk cache. The --disable-gpu-shader-disk-cache flag
  // overrides this feature and forces the disk cache to be disabled.
@@ -62,7 +61,7 @@ index abf7b63a7b..b93c1ce031 100644
  
  bool IsShaderDiskCacheEnabled(const base::CommandLine* command_line) {
    if (command_line->HasSwitch(switches::kDisableGpuShaderDiskCache)) {
-@@ -426,11 +427,7 @@ BASE_FEATURE(kSkiaGraphiteDawnUseD3D12, base::FEATURE_DISABLED_BY_DEFAULT);
+@@ -426,11 +426,7 @@ BASE_FEATURE(kSkiaGraphiteDawnUseD3D12, base::FEATURE_DISABLED_BY_DEFAULT);
  // Usage for Graphite is controlled independently with
  // kSkiaGraphiteDawnUsePersistentCache.
  BASE_FEATURE(kGpuPersistentCache,
