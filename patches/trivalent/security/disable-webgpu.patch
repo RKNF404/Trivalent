@@ -36,18 +36,16 @@ index cbac8ed617..d07d657521 100644
 
        if (prefs->GetBoolean(prefs::kPrintPreviewDisabled)) {
 diff --git a/gpu/command_buffer/service/service_utils.cc b/gpu/command_buffer/service/service_utils.cc
-index b51eb62b6f..cd452a0fc0 100644
+index b51eb62b6f..0da7240c09 100644
 --- a/gpu/command_buffer/service/service_utils.cc
 +++ b/gpu/command_buffer/service/service_utils.cc
-@@ -270,9 +269,9 @@ GpuPreferences ParseGpuPreferences(const base::CommandLine* command_line) {
+@@ -270,8 +270,7 @@ GpuPreferences ParseGpuPreferences(const base::CommandLine* command_line) {
        }
      }
    }
 -  gpu_preferences.enable_webgpu =
 -      command_line->HasSwitch(switches::kEnableUnsafeWebGPU) ||
--      base::FeatureList::IsEnabled(features::kWebGPUService);
 +  gpu_preferences.enable_webgpu = !command_line->HasSwitch("disable-webgpu") &&
-+      base::FeatureList::IsEnabled(features::kWebGPUService);
+       base::FeatureList::IsEnabled(features::kWebGPUService);
    gpu_preferences.enable_unsafe_webgpu =
        command_line->HasSwitch(switches::kEnableUnsafeWebGPU);
-   gpu_preferences.enable_webgpu_developer_features =
