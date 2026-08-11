@@ -43,15 +43,6 @@ diff --git a/gpu/config/gpu_finch_features.cc b/gpu/config/gpu_finch_features.cc
 index abf7b63a7b..b93c1ce031 100644
 --- a/gpu/config/gpu_finch_features.cc
 +++ b/gpu/config/gpu_finch_features.cc
-@@ -278,7 +278,7 @@ BASE_FEATURE(kEnableDrDc,
- // enabled by default on supported platforms.
- #if BUILDFLAG(IS_APPLE) || BUILDFLAG(IS_WIN) || BUILDFLAG(IS_CHROMEOS) || \
-     BUILDFLAG(IS_ANDROID) || BUILDFLAG(USE_WEBGPU_ON_VULKAN_VIA_GL_INTEROP)
--#define WEBGPU_ENABLED base::FEATURE_ENABLED_BY_DEFAULT
-+#define WEBGPU_ENABLED base::FEATURE_DISABLED_BY_DEFAULT
- #else
- #define WEBGPU_ENABLED base::FEATURE_DISABLED_BY_DEFAULT
- #endif
 @@ -169,7 +169,7 @@ BASE_FEATURE(kClearGrShaderDiskCacheOnInvalidPrefix,
  // kill-switch for working around issues with the disk cache and assessing the
  // performance value of the disk cache. The --disable-gpu-shader-disk-cache flag
