@@ -60,7 +60,7 @@ jobs:
             "${DISCORD_WEBHOOK}"
 
       - name: Enable egress auditing
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40 # v2.20.1
         with:
           egress-policy: audit
 
@@ -69,6 +69,7 @@ jobs:
         id: srpm_build
         env:
           BRANCH: ${{ github.ref_name }}
+          BUILD_SHA: ${{ github.sha }}
           CACHE_OVERRIDE_VERSION: ${{ inputs.override_version }}
         run: |
           dnf copr enable secureblue/trivalent -y
@@ -83,6 +84,7 @@ jobs:
           SOURCE_CACHE_HASH=$(sha256sum /usr/src/chromium/chromium-*.xz)
           echo "SOURCE_CACHE_HASH: ${SOURCE_CACHE_HASH}"
           git clone --branch "${BRANCH}" https://github.com/secureblue/Trivalent.git
+          git -C Trivalent checkout --detach "${BUILD_SHA}"
           bash ./Trivalent/copr_script.sh
           rpmbuild -bs -v --define "_sourcedir $PWD" --define "_rpmdir $PWD" --define "_builddir $PWD" --define "_specdir $PWD" --define "_srcrpmdir $PWD" trivalent.spec
           SRPM_HASH=$(sha256sum *.rpm)
@@ -107,7 +109,7 @@ jobs:
       options: --privileged
     steps:
       - name: Enable egress auditing
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40 # v2.20.1
         with:
           egress-policy: audit
 
@@ -165,7 +167,7 @@ jobs:
       hashes: ${{ steps.sign.outputs.hashes }}
     steps:
       - name: Enable egress auditing
-        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        uses: step-security/harden-runner@b09bb98e06d4d774595224525879c09bc6e98c40 # v2.20.1
         with:
           egress-policy: audit
 
