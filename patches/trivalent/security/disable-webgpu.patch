@@ -23,29 +23,3 @@ index abf7b63a7b..b93c1ce031 100644
  #else
  #define WEBGPU_ENABLED base::FEATURE_DISABLED_BY_DEFAULT
  #endif
-diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
-index cbac8ed617..d07d657521 100644
---- a/chrome/browser/chrome_content_browser_client.cc
-+++ b/chrome/browser/chrome_content_browser_client.cc
-@@ -2930,6 +2930,7 @@ void ChromeContentBrowserClient::AppendExtraCommandLineSwitches(
-           prefs->GetBoolean(prefs::kDisable3DAPIs)) {
-         // Turn this policy into a command line switch.
-         command_line->AppendSwitch(switches::kDisable3DAPIs);
-+        command_line->AppendSwitch("disable-webgpu");
-       }
-
-       if (prefs->GetBoolean(prefs::kPrintPreviewDisabled)) {
-diff --git a/gpu/command_buffer/service/service_utils.cc b/gpu/command_buffer/service/service_utils.cc
-index b51eb62b6f..0da7240c09 100644
---- a/gpu/command_buffer/service/service_utils.cc
-+++ b/gpu/command_buffer/service/service_utils.cc
-@@ -270,8 +270,7 @@ GpuPreferences ParseGpuPreferences(const base::CommandLine* command_line) {
-       }
-     }
-   }
--  gpu_preferences.enable_webgpu =
--      command_line->HasSwitch(switches::kEnableUnsafeWebGPU) ||
-+  gpu_preferences.enable_webgpu = !command_line->HasSwitch("disable-webgpu") &&
-       base::FeatureList::IsEnabled(features::kWebGPUService);
-   gpu_preferences.enable_unsafe_webgpu =
-       command_line->HasSwitch(switches::kEnableUnsafeWebGPU);
