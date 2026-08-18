@@ -11,10 +11,10 @@ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, e
 See the License for the specific language governing permissions and limitations under the License.
 ---
 diff --git a/chrome/browser/ui/browser_ui_prefs.cc b/chrome/browser/ui/browser_ui_prefs.cc
-index 837e75e79b..bb8acd5cb1 100644
+index 7b0257c24d..969c917511 100644
 --- a/chrome/browser/ui/browser_ui_prefs.cc
 +++ b/chrome/browser/ui/browser_ui_prefs.cc
-@@ -129,7 +129,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+@@ -139,7 +139,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
    registry->RegisterBooleanPref(prefs::kWebAppCreateInAppsMenu, true);
    registry->RegisterBooleanPref(prefs::kWebAppCreateInQuickLaunchBar, true);
    registry->RegisterBooleanPref(
@@ -23,7 +23,7 @@ index 837e75e79b..bb8acd5cb1 100644
        user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
    registry->RegisterDictionaryPref(prefs::kBrowserWindowPlacement);
    registry->RegisterDictionaryPref(prefs::kBrowserWindowPlacementPopup);
-@@ -150,23 +150,23 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+@@ -152,21 +152,21 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
                                  false);
  #endif
    registry->RegisterStringPref(prefs::kWebRTCIPHandlingPolicy,
@@ -39,20 +39,17 @@ index 837e75e79b..bb8acd5cb1 100644
    registry->RegisterListPref(
        prefs::kWebRTCDiagnosticLogCollectionAllowedForOrigins,
        base::ListValue());
- 
+
    // We need to register the type of these preferences in order to query
    // them even though they're only typically controlled via policy.
 -  registry->RegisterBooleanPref(policy::policy_prefs::kHideWebStoreIcon, false);
 -  registry->RegisterBooleanPref(prefs::kSharedClipboardEnabled, true);
 +  registry->RegisterBooleanPref(policy::policy_prefs::kHideWebStoreIcon, true);
 +  registry->RegisterBooleanPref(prefs::kSharedClipboardEnabled, false);
- 
--  registry->RegisterBooleanPref(prefs::kClickToCallEnabled, true);
-+  registry->RegisterBooleanPref(prefs::kClickToCallEnabled, false);
- 
+
  #if BUILDFLAG(IS_MAC)
    // This really belongs in platform code, but there's no good place to
-@@ -188,7 +188,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+@@ -194,7 +194,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
 
    registry->RegisterBooleanPref(prefs::kEnterpriseHardwarePlatformAPIEnabled,
                                  false);
@@ -61,7 +58,7 @@ index 837e75e79b..bb8acd5cb1 100644
    registry->RegisterBooleanPref(
        prefs::kExternalProtocolDialogShowAlwaysOpenCheckbox, true);
    registry->RegisterBooleanPref(prefs::kScreenCaptureAllowed, true);
-@@ -210,7 +210,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
+@@ -216,7 +216,7 @@ void RegisterBrowserUserPrefs(user_prefs::PrefRegistrySyncable* registry) {
  #endif
 
    registry->RegisterBooleanPref(
