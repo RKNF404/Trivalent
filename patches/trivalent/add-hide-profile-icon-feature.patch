@@ -37,13 +37,13 @@ index 5588ad208d..b72a395db3 100644
  // alongside the definition of their values in the .cc file.
 
 diff --git a/chrome/browser/ui/views/toolbar/toolbar_view.cc b/chrome/browser/ui/views/toolbar/toolbar_view.cc
-index 5a42610d05..cf57e55074 100644
+index 03aedd9edd..7472fd8814 100644
 --- a/chrome/browser/ui/views/toolbar/toolbar_view.cc
 +++ b/chrome/browser/ui/views/toolbar/toolbar_view.cc
-@@ -583,6 +583,9 @@ void ToolbarView::Init() {
+@@ -576,6 +576,9 @@ void ToolbarView::Init() {
          AddChildView(std::make_unique<AvatarToolbarButton>(browser_view_));
      bool show_avatar_toolbar_button =
-         AvatarToolbarButtonInterface::CanShowForProfile(browser_->profile());
+         AvatarToolbarButtonInterface::CanShowForProfile(browser_->GetProfile());
 +    if (browser_->profile()->IsRegularProfile())
 +      show_avatar_toolbar_button = show_avatar_toolbar_button &&
 +                     !base::FeatureList::IsEnabled(features::kHideProfileIcon);
