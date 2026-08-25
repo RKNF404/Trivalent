@@ -11,10 +11,10 @@ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, e
 See the License for the specific language governing permissions and limitations under the License.
 ---
 diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
-index cbac8ed617..1e5cdbb498 100644
+index 47fb8dbd05..a40de1f7c9 100644
 --- a/chrome/browser/chrome_content_browser_client.cc
 +++ b/chrome/browser/chrome_content_browser_client.cc
-@@ -8216,20 +8216,17 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
+@@ -8134,22 +8134,17 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
      const GURL& site_url) {
    Profile* profile = Profile::FromBrowserContext(browser_context);
    auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
@@ -29,8 +29,10 @@ index cbac8ed617..1e5cdbb498 100644
                                           nullptr) == CONTENT_SETTING_BLOCK;
    }
 
--  // Only disable JIT for web schemes.
--  if (!site_url.SchemeIsHTTPOrHTTPS()) {
+-  // Only disable JIT for schemes that might actually load web content. This
+-  // enables JIT for schemes such as chrome:// and chrome-untrusted://.
+-  auto* policy = ChildProcessSecurityPolicy::GetInstance();
+-  if (!policy->IsWebSafeScheme(site_url.GetScheme())) {
 -    return false;
 -  }
 -
@@ -42,7 +44,7 @@ index cbac8ed617..1e5cdbb498 100644
  }
 
  bool ChromeContentBrowserClient::AreV8OptimizationsEnabledForSite(
-@@ -8237,18 +8234,10 @@ bool ChromeContentBrowserClient::AreV8OptimizationsEnabledForSite(
+@@ -8157,18 +8152,11 @@ bool ChromeContentBrowserClient::AreV8OptimizationsEnabledForSite(
      const std::optional<base::SafeRef<content::ProcessSelectionUserData>>&
          process_selection_user_data,
      const GURL& site_url) {
@@ -53,7 +55,7 @@ index cbac8ed617..1e5cdbb498 100644
 -  if (!site_url.is_empty() && !policy->IsWebSafeScheme(site_url.GetScheme())) {
 -    return true;
 -  }
--
+
    Profile* profile = Profile::FromBrowserContext(browser_context);
    auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
    if (!map) {
@@ -62,7 +64,7 @@ index cbac8ed617..1e5cdbb498 100644
    }
 
    if (site_url.is_empty()) {
-@@ -8258,85 +8247,14 @@ bool ChromeContentBrowserClient::AreV8OptimizationsEnabledForSite(
+@@ -8178,85 +8166,13 @@ bool ChromeContentBrowserClient::AreV8OptimizationsEnabledForSite(
      // familiarity or site-specific settings cannot be considered here, because
      // the process will be shared among many sites.
      return map->GetDefaultContentSetting(
@@ -99,7 +101,7 @@ index cbac8ed617..1e5cdbb498 100644
 -
 -  if (default_javascript_optimizer_setting !=
 -          JavascriptOptimizerSetting::kBlockedForUnfamiliarSites ||
--      site_protection::IsV8OptimizerMigrationDryRun(profile)) {
+-      site_protection::IsV8OptimizerBlockingDryRun(profile)) {
 -    // If site familiarity is turned off or we are in dry-run mode, use content
 -    // settings to set v8 optimization. Use `site_content_setting` to honor
 -    // exceptions for specific sites over a default policy that applies to all
@@ -145,13 +147,12 @@ index cbac8ed617..1e5cdbb498 100644
 -  // for speculative RenderFrameHosts.
 -  return !site_familiarity_user_data ||
 -         site_familiarity_user_data->is_site_familiar();
-+               ContentSettingsType::JAVASCRIPT_OPTIMIZER, nullptr) ==
++              ContentSettingsType::JAVASCRIPT_OPTIMIZER, nullptr) ==
 +           CONTENT_SETTING_ALLOW || IsJitDisabledForSite(browser_context, GURL());
 +  }
 +
 +  return map->GetContentSetting(site_url, site_url,
-+                                       ContentSettingsType::JAVASCRIPT_OPTIMIZER) ==
-+                     CONTENT_SETTING_ALLOW
++            ContentSettingsType::JAVASCRIPT_OPTIMIZER) == CONTENT_SETTING_ALLOW
 +         || IsJitDisabledForSite(browser_context, site_url);
  }
 
