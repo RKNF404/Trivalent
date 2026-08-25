@@ -62,10 +62,10 @@ index 158cc88454..8322d7a327 100644
      </cr-checkbox>
    </div>
 diff --git a/chrome/browser/ui/webui/settings/settings_ui.cc b/chrome/browser/ui/webui/settings/settings_ui.cc
-index d5c37bda84..13e0197694 100644
+index dc64cf060b..11f88f4f21 100644
 --- a/chrome/browser/ui/webui/settings/settings_ui.cc
 +++ b/chrome/browser/ui/webui/settings/settings_ui.cc
-@@ -360,9 +360,7 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+@@ -355,9 +355,7 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
    html_source->AddBoolean("isOSSettings", false);
  #endif  // BUILDFLAG(IS_CHROMEOS)
 
@@ -75,22 +75,8 @@ index d5c37bda84..13e0197694 100644
 +  bool show_privacy_guide = false;
    html_source->AddBoolean("showPrivacyGuide", show_privacy_guide);
 
-
-@@ -507,12 +505,7 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
-       privacy_sandbox_service->IsRestrictedNoticeEnabled();
-   bool is_ad_privacy_ux_deprecation_enabled = base::FeatureList::IsEnabled(
-       privacy_sandbox::kPrivacySandboxAdPrivacyUxDeprecation);
--  bool is_ad_privacy_available = true;
--  if (is_ad_privacy_ux_deprecation_enabled) {
--    is_ad_privacy_available = false;
--  } else if (is_privacy_sandbox_restricted) {
--    is_ad_privacy_available = is_restricted_notice_enabled;
--  }
-+  bool is_ad_privacy_available = false;
-
-   html_source->AddBoolean("isPrivacySandboxRestricted",
-                           is_privacy_sandbox_restricted);
-@@ -595,7 +588,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+   html_source->AddBoolean("enableHandTrackingContentSetting",
+@@ -559,7 +557,6 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
    bool glic_disallowed_by_admin = false;
 
    auto glic_enablement = glic::GlicEnabling::EnablementForProfile(profile);
@@ -98,17 +84,21 @@ index d5c37bda84..13e0197694 100644
    glic_disallowed_by_admin = glic_enablement.DisallowedByAdmin();
 
    if (glic_enablement.IsProfileEligible()) {
-@@ -656,10 +656,10 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+@@ -615,15 +612,13 @@ SettingsUI::SettingsUI(content::WebUI* web_ui)
+               kContextualTasksContextSmartTabSharingDefaultOnAvailability);
+   html_source->AddBoolean("enableAiModeSearchSetting", enable_ai_mode_search);
+
+-  const bool show_ai_settings_for_testing = base::FeatureList::IsEnabled(
+-      optimization_guide::features::kAiSettingsPageForceAvailable);
++  const bool show_ai_settings_for_testing = false;
 
    // Show the AI features section in the AI page if any of the AI features are
    // enabled.
--  bool show_ai_features_section = show_ai_settings_for_testing;
-+  bool show_ai_features_section = false;
-+
+   bool show_ai_features_section = show_ai_settings_for_testing;
    for (auto [name, visible] : optimization_guide_features) {
 -    html_source->AddBoolean(name, visible || show_ai_settings_for_testing);
 -    show_ai_features_section |= visible;
-+    html_source->AddBoolean(name, show_ai_features_section);
++    html_source->AddBoolean(name, show_ai_settings_for_testing);
    }
 
-   // Within the AI subpage are separate sections for Glic and for all other AI
+ #if BUILDFLAG(GOOGLE_CHROME_BRANDING)
