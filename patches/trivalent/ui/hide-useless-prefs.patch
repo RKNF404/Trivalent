@@ -70,24 +70,23 @@ index 3692a01c1e..4ba109b3d8 100644
            data-parent-view-id="safetyHubEntryPoint" prefs="{{prefs}}"
            route-path$="[[routes_.SAFETY_HUB.path]]">
        </settings-safety-hub-page>
-diff --git a/chrome/browser/resources/settings/a11y_page/live_translate.html b/chrome/browser/resources/settings/a11y_page/live_translate.html
-index 1ccdc5d82b..c8ce8d033c 100644
---- a/chrome/browser/resources/settings/a11y_page/live_translate.html
-+++ b/chrome/browser/resources/settings/a11y_page/live_translate.html
-@@ -25,28 +25,3 @@
-     width: 100%;
-   }
- </style>
+diff --git a/chrome/browser/resources/settings/a11y_page/live_translate.html.ts b/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
+index 94859e1cb8..8603fda70d 100644
+--- a/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
++++ b/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
+@@ -9,30 +9,6 @@ import type {SettingsLiveTranslateElement} from './live_translate.js';
+ export function getHtml(this: SettingsLiveTranslateElement) {
+   // clang-format off
+   return html`<!--_html_template_start_-->
 -<div class="cr-row cr-row-with-template">
 -  <settings-toggle-button id="liveTranslateToggleButton"
--      pref="{{prefs.accessibility.captions.live_translate_enabled}}"
--      on-change="onLiveTranslateEnabledChange_"
+-      pref-key="accessibility.captions.live_translate_enabled"
+-      @change="${this.onLiveTranslateEnabledChange_}"
 -      label="$i18n{captionsEnableLiveTranslateTitle}"
 -      sub-label="$i18n{captionsEnableLiveTranslateSubtitle}">
 -  </settings-toggle-button>
 -</div>
--<cr-collapse
--    opened="[[prefs.accessibility.captions.live_translate_enabled.value]]">
+-<cr-collapse ?opened="${this.isLiveTranslateEnabled_}">
 -  <div class="cr-row continuation subsection-group">
 -    <div class="start cr-padded-text" aria-hidden="true">
 -        $i18n{captionsLiveTranslateTargetLanguage}
@@ -98,16 +97,19 @@ index 1ccdc5d82b..c8ce8d033c 100644
 -    <settings-dropdown-menu id="targetLanguageDropdown"
 -        class="language-dropdown"
 -        pref-key="accessibility.captions.live_translate_target_language"
--        menu-options="[[translatableLanguages_]]"
+-        .menuOptions="${this.translatableLanguages_}"
 -        label="$i18n{captionsLiveTranslateTargetLanguage}">
 -    </settings-dropdown-menu>
 -  </div>
 -</cr-collapse>
+ <!--_html_template_end_-->`;
+   // clang-format on
+ }
 diff --git a/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html b/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
-index 79bdf9e485..56b7e31688 100644
+index dbc3c7435e..c178b5ebea 100644
 --- a/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
 +++ b/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
-@@ -112,25 +112,3 @@
+@@ -120,25 +120,3 @@
      </div>
    </template>
  </div>
@@ -129,7 +131,7 @@ index 79bdf9e485..56b7e31688 100644
 -    </cr-link-row>
 -    <cr-link-row id="googleAccountButton" label="$i18n{googleAccount}"
 -        on-click="onGoogleAccountRelatedServiceClick_"
--        start-icon="settings20:googleg" external>
+-        start-icon="settings20:google" external>
 -    </cr-link-row>
 -  </div>
 -</settings-section>
