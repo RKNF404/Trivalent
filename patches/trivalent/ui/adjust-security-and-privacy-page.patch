@@ -11,7 +11,7 @@ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, e
 See the License for the specific language governing permissions and limitations under the License.
 ---
 diff --git a/chrome/browser/resources/settings/privacy_page/security/security_page.html b/chrome/browser/resources/settings/privacy_page/security/security_page.html
-index 6b9bd1adee..6e0bea5eee 100644
+index 2918ece84f..8d01f7bf06 100644
 --- a/chrome/browser/resources/settings/privacy_page/security/security_page.html
 +++ b/chrome/browser/resources/settings/privacy_page/security/security_page.html
 @@ -3,6 +3,10 @@
@@ -57,7 +57,7 @@ index 6b9bd1adee..6e0bea5eee 100644
 -                </h3>
 -                <ul class="icon-bulleted-list">
 -                  <li>
--                    <cr-icon icon="settings20:data" aria-hidden="true">
+-                    <cr-icon icon="settings20:bar-chart" aria-hidden="true">
 -                    </cr-icon>
 -                    <div class="secondary">
 -                      $i18n{safeBrowsingEnhancedWhenOnBulOne}
@@ -104,7 +104,7 @@ index 6b9bd1adee..6e0bea5eee 100644
 -                    </div>
 -                  </li>
 -                  <li>
--                    <cr-icon icon="settings:performance"></cr-icon>
+-                    <cr-icon icon="settings:speed"></cr-icon>
 -                    <div class="cr-secondary-text">
 -                      $i18n{safeBrowsingEnhancedThingsToConsiderBulThree}
 -                    </div>
