@@ -20,7 +20,7 @@ index 22af8003c7..54c42a6871 100644
 +    std::vector<std::string> switch_values = base::SplitString(
 +        cmdline->GetSwitchValueASCII(kOmniboxScopeFlag), ",",
 +        base::KEEP_WHITESPACE, base::SPLIT_WANT_NONEMPTY);
-+    config_.provider_types &= AutocompleteProvider::TYPE_KEYWORD | AutocompleteProvider::TYPE_SEARCH |
++    config_.provider_types = AutocompleteProvider::TYPE_KEYWORD | AutocompleteProvider::TYPE_SEARCH |
 +        AutocompleteProvider::TYPE_HISTORY_URL;
 +    if (std::ranges::contains(switch_values, "bookmarks"))
 +      config_.provider_types |= AutocompleteProvider::TYPE_BOOKMARK;
