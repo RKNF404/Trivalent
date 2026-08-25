@@ -10,6 +10,18 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
+Copyright 2024-2026 The Trivalent Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is
+distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.
+---
 diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
 index 900df063b86fa..8ac0084983784 100644
 --- a/chrome/browser/chrome_content_browser_client.cc
@@ -41,6 +53,50 @@ index 8ea949d4f3ff4..1a08b76cbb9e7 100644
    if (base::PathExists(screen_ai::GetComponentDir())) {
      ScreenAIComponentInstallerPolicy::DeleteComponent();
    }
+diff --git a/chrome/browser/devtools/devtools_window.cc b/chrome/browser/devtools/devtools_window.cc
+index 5d4e803be9693..1609d4291c53e 100644
+--- a/chrome/browser/devtools/devtools_window.cc
++++ b/chrome/browser/devtools/devtools_window.cc
+@@ -570,7 +570,7 @@ void DevToolsWindow::RegisterProfilePrefs(
+       prefs::kDevToolsSyncedPreferencesSyncDisabled);
+   registry->RegisterIntegerPref(
+       prefs::kDevToolsGenAiSettings,
+-      static_cast<int>(DevToolsGenAiEnterprisePolicyValue::kAllow));
++      static_cast<int>(DevToolsGenAiEnterprisePolicyValue::kDisable));
+   registry->RegisterIntegerPref(
+       prefs::kDevToolsGoogleDeveloperProgramProfileAvailability,
+       /* enabled */ 0);
+ #if BUILDFLAG(IS_CHROMEOS)
+diff --git a/components/omnibox/browser/aim_eligibility_service.cc b/components/omnibox/browser/aim_eligibility_service.cc
+index de465ad4e7..3d8b3fd751 100644
+--- a/components/omnibox/browser/aim_eligibility_service.cc
++++ b/components/omnibox/browser/aim_eligibility_service.cc
+@@ -247,10 +247,8 @@ bool AimEligibilityService::GenericKillSwitchFeatureCheck(
+ // static
+ void AimEligibilityService::RegisterProfilePrefs(PrefRegistrySimple* registry) {
+   registry->RegisterStringPref(kResponsePrefName, "");
+-  registry->RegisterIntegerPref(omnibox::kAIModeSettings,
+-                                kAiModeAllowedDefault);
+-  registry->RegisterIntegerPref(omnibox::kThirdPartyAiChatSettings,
+-                                kAiModeAllowedDefault);
++  registry->RegisterIntegerPref(omnibox::kAIModeSettings, 1);
++  registry->RegisterIntegerPref(omnibox::kThirdPartyAiChatSettings, 1);
+ }
+
+ // static
+diff --git a/components/omnibox/browser/aim_eligibility_service_features.cc b/components/omnibox/browser/aim_eligibility_service_features.cc
+index 014e4ad46ec9e..088c44bac95af 100644
+--- a/components/omnibox/browser/aim_eligibility_service_features.cc
++++ b/components/omnibox/browser/aim_eligibility_service_features.cc
+@@ -8,7 +8,7 @@
+ 
+ namespace omnibox {
+ 
+-BASE_FEATURE(kAimEnabled, base::FEATURE_ENABLED_BY_DEFAULT);
++BASE_FEATURE(kAimEnabled, base::FEATURE_DISABLED_BY_DEFAULT);
+ 
+ BASE_FEATURE(kAimServerEligibilityEnabled, base::FEATURE_ENABLED_BY_DEFAULT);
+ 
 diff --git a/components/omnibox/common/omnibox_features.cc b/components/omnibox/common/omnibox_features.cc
 index bbd4290959..cda52bcacc 100644
 --- a/components/omnibox/common/omnibox_features.cc
@@ -67,58 +123,59 @@ index c5ceac4713a5b..a25847ee6022d 100644
          PrefRegistry::LOSSY_PREF);
    }
    // From that point on, it's too late to modify the registry as the prefs
-diff --git a/components/policy/core/browser/gen_ai_default_settings_policy_handler.cc b/components/policy/core/browser/gen_ai_default_settings_policy_handler.cc
-index 562fd93d23..9712ee9ffa 100644
---- a/components/policy/core/browser/gen_ai_default_settings_policy_handler.cc
-+++ b/components/policy/core/browser/gen_ai_default_settings_policy_handler.cc
-@@ -46,27 +46,11 @@ std::optional<int> GetValueToApply(
-     const GenAiDefaultSettingsPolicyHandler::GenAiPolicyDetails& policy,
-     const PolicyMap& policies,
-     int default_int_value) {
--  // Don't apply the default if the specific policy is already set.
--  if (policies.Get(policy.name)) {
--    return std::nullopt;
--  }
--
--  // Don't apply the default if there is an overriding policy and it is set.
--  // This should be handled by the legacy policy handler.
--  if (policy.overridden_name && policies.Get(policy.overridden_name.value())) {
--    return std::nullopt;
--  }
--
-   // If no map exists, use the default value directly.
-   if (policy.policy_value_to_pref_map.empty()) {
-     return default_int_value;
-   }
+diff --git a/chrome/browser/glic/glic_pref_names.cc b/chrome/browser/glic/glic_pref_names.cc
+index a38032123d..a8d891ab45 100644
+--- a/chrome/browser/glic/glic_pref_names.cc
++++ b/chrome/browser/glic/glic_pref_names.cc
+@@ -122,7 +122,7 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
 
--  // If a map exists, do not use it only if the feature is disabled.
--  if (!IsGenAiPolicyDefaultsUsePrefMap()) {
--    return std::nullopt;
--  }
--
-   // Find the corresponding value in the map. If not found, don't apply.
-   auto it = policy.policy_value_to_pref_map.find(default_int_value);
-   if (it == policy.policy_value_to_pref_map.end()) {
-@@ -122,6 +106,7 @@ GenAiDefaultSettingsPolicyHandler::~GenAiDefaultSettingsPolicyHandler() =
- bool GenAiDefaultSettingsPolicyHandler::CheckPolicySettings(
-     const policy::PolicyMap& policies,
-     policy::PolicyErrorMap* errors) {
-+  return true;
-   if (!IsApplyGenAiPolicyDefaultsEnabled()) {
-     return true;
-   }
-@@ -183,13 +168,7 @@ void GenAiDefaultSettingsPolicyHandler::ApplyPolicySettings(
-     return;
-   }
+   registry->RegisterIntegerPref(
+       prefs::kGlicActuationOnWeb,
+-      std::to_underlying(GetGlicActuationOnWebPolicyState()));
++      1);
 
--  const base::Value* default_value =
--      policies.GetValue(policy_name(), base::Value::Type::INTEGER);
--  if (!default_value) {
--    return;
--  }
--
--  int default_int_value = default_value->GetInt();
-+  const int default_int_value = 2;
-   for (const auto& policy : gen_ai_policies_) {
-     // Get the value to apply from the policy and its overriding policy.
-     std::optional<int> value_to_apply =
+   registry->RegisterIntegerPref(
+       prefs::kGlicFileUploadAllowed,
+diff --git a/chrome/browser/prefs/browser_prefs.cc b/chrome/browser/prefs/browser_prefs.cc
+index 1317d71ce1..31249ee199 100644
+--- a/chrome/browser/prefs/browser_prefs.cc
++++ b/chrome/browser/prefs/browser_prefs.cc
+@@ -2284,7 +2284,7 @@ void RegisterScreenshotPrefs(PrefRegistrySimple* registry) {
+ }
+
+ void RegisterGeminiSettingsPrefs(user_prefs::PrefRegistrySyncable* registry) {
+-  registry->RegisterIntegerPref(optimization_guide::prefs::kGeminiSettings, 0);
++  registry->RegisterIntegerPref(optimization_guide::prefs::kGeminiSettings, 1);
+ }
+
+ #if BUILDFLAG(IS_CHROMEOS)
+diff --git a/components/contextual_search/contextual_search_service.cc b/components/contextual_search/contextual_search_service.cc
+index d38f101331..d6bf7766ec 100644
+--- a/components/contextual_search/contextual_search_service.cc
++++ b/components/contextual_search/contextual_search_service.cc
+@@ -68,7 +68,8 @@ void ContextualSearchService::RegisterProfilePrefs(
+     PrefRegistrySimple* registry) {
+   registry->RegisterIntegerPref(
+       kSearchContentSharingSettings,
+-      static_cast<int>(kSearchContentSharingAllowedDefault));
++      static_cast<int>(contextual_search::
++                       SearchContentSharingSettingsValue::kDisabled));
+   registry->RegisterIntegerPref(
+       kDriveConsentState, static_cast<int>(DriveConsentState::kRestricted),
+       user_prefs::PrefRegistrySyncable::SYNCABLE_PREF);
+diff --git a/components/optimization_guide/core/model_execution/model_execution_prefs.cc b/components/optimization_guide/core/model_execution/model_execution_prefs.cc
+index 36240678e7..c2c6f7cb72 100644
+--- a/components/optimization_guide/core/model_execution/model_execution_prefs.cc
++++ b/components/optimization_guide/core/model_execution/model_execution_prefs.cc
+@@ -129,9 +129,9 @@ void RegisterLocalStatePrefs(PrefRegistrySimple* registry) {
+   registry->RegisterInt64Pref(localstate::kModelQualityLoggingClientId, 0,
+                               PrefRegistry::LOSSY_PREF);
+   registry->RegisterIntegerPref(
+-      localstate::kGenAILocalFoundationalModelEnterprisePolicySettings, 0);
++      localstate::kGenAILocalFoundationalModelEnterprisePolicySettings, 1);
+   registry->RegisterBooleanPref(localstate::kOnDeviceAiUserSettingsEnabled,
+-                                true);
++                                false);
+   registry->RegisterBooleanPref(localstate::kEmbeddingApiModelDownloadEligible,
+                                 false);
+   registry->RegisterDictionaryPref(localstate::kManifestAssetLedger);
