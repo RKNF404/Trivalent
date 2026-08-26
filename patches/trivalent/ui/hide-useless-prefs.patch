@@ -71,21 +71,22 @@ index 3692a01c1e..4ba109b3d8 100644
            route-path$="[[routes_.SAFETY_HUB.path]]">
        </settings-safety-hub-page>
 diff --git a/chrome/browser/resources/settings/a11y_page/live_translate.html.ts b/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
-index 94859e1cb8..8603fda70d 100644
+index 94859e1cb8..852ba00445 100644
 --- a/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
 +++ b/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
-@@ -9,30 +9,6 @@ import type {SettingsLiveTranslateElement} from './live_translate.js';
+@@ -9,7 +9,7 @@ import type {SettingsLiveTranslateElement} from './live_translate.js';
  export function getHtml(this: SettingsLiveTranslateElement) {
    // clang-format off
    return html`<!--_html_template_start_-->
 -<div class="cr-row cr-row-with-template">
--  <settings-toggle-button id="liveTranslateToggleButton"
--      pref-key="accessibility.captions.live_translate_enabled"
--      @change="${this.onLiveTranslateEnabledChange_}"
--      label="$i18n{captionsEnableLiveTranslateTitle}"
--      sub-label="$i18n{captionsEnableLiveTranslateSubtitle}">
--  </settings-toggle-button>
--</div>
++<div class="cr-row cr-row-with-template" style="display:none">
+   <settings-toggle-button id="liveTranslateToggleButton"
+       pref-key="accessibility.captions.live_translate_enabled"
+       @change="${this.onLiveTranslateEnabledChange_}"
+@@ -17,22 +17,6 @@ export function getHtml(this: SettingsLiveTranslateElement) {
+       sub-label="$i18n{captionsEnableLiveTranslateSubtitle}">
+   </settings-toggle-button>
+ </div>
 -<cr-collapse ?opened="${this.isLiveTranslateEnabled_}">
 -  <div class="cr-row continuation subsection-group">
 -    <div class="start cr-padded-text" aria-hidden="true">
