@@ -1,0 +1,13 @@
+diff --git a/build/rust/gni_impl/rust_target.gni b/build/rust/gni_impl/rust_target.gni
+index c0315a281b..e619f2ae55 100644
+--- a/build/rust/gni_impl/rust_target.gni
++++ b/build/rust/gni_impl/rust_target.gni
+@@ -98,7 +98,7 @@ template("rust_target") {
+   _enable_cpp_api_from_rust_for_this_target = false
+   if (defined(invoker.cpp_api_from_rust)) {
+     _cpp_api_from_rust_attributes = invoker.cpp_api_from_rust
+-    if (!enable_cpp_api_from_rust) {
++    if (true) {
+       not_needed(_cpp_api_from_rust_attributes, "*")
+     } else {
+       _enable_cpp_api_from_rust_for_this_target = true
