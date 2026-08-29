@@ -11,7 +11,7 @@ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, e
 See the License for the specific language governing permissions and limitations under the License.
 ---
 diff --git a/chrome/browser/resources/settings/privacy_page/security/security_page.html b/chrome/browser/resources/settings/privacy_page/security/security_page.html
-index 2918ece84f..8d01f7bf06 100644
+index 2918ece84f..49cfa2112d 100644
 --- a/chrome/browser/resources/settings/privacy_page/security/security_page.html
 +++ b/chrome/browser/resources/settings/privacy_page/security/security_page.html
 @@ -3,6 +3,10 @@
@@ -25,7 +25,7 @@ index 2918ece84f..8d01f7bf06 100644
      .bullet-line {
        align-items: center;
        display: flex;
-@@ -70,129 +74,9 @@
+@@ -70,9 +74,10 @@
        pointer-events: auto;
      }
    </style>
@@ -33,164 +33,50 @@ index 2918ece84f..8d01f7bf06 100644
 +  <settings-subpage page-title="$i18n{privacyPageTitle}"
        learn-more-url="$i18n{safeBrowsingHelpCenterURL}"
        route-path$="[[routePath]]">
--    <div id="safeBrowsingSection">
--      <h2 class="cr-title-text">$i18n{safeBrowsingSectionLabel}</h2>
--      <settings-radio-group id="safeBrowsingRadioGroup" no-set-pref
--          pref="{{prefs.generated.safe_browsing}}"
--          selectable-elements="cr-radio-button, settings-collapse-radio-button"
--          on-change="onSafeBrowsingRadioChange_">
--        <settings-collapse-radio-button id="safeBrowsingEnhanced"
--            name="[[safeBrowsingSettingEnum_.ENHANCED]]"
--            pref="[[prefs.generated.safe_browsing]]"
--            label="$i18n{safeBrowsingEnhanced}"
--            sub-label="$i18n{safeBrowsingEnhancedDescUpdated}"
--            indicator-aria-label="$i18n{controlledSettingPolicy}"
--            expand-aria-label="$i18n{safeBrowsingEnhancedExpandA11yLabel}"
--            on-expand-clicked="onEnhancedProtectionExpandButtonClicked_"
--            no-automatic-collapse>
--          <div slot="collapse">
--            <div id="enhancedProtectionDescContainer"
--                class="settings-columned-section">
--              <div class="column">
--                <h3 class="description-header">
--                  $i18n{columnHeadingWhenOn}
--                </h3>
--                <ul class="icon-bulleted-list">
--                  <li>
--                    <cr-icon icon="settings20:bar-chart" aria-hidden="true">
--                    </cr-icon>
--                    <div class="secondary">
--                      $i18n{safeBrowsingEnhancedWhenOnBulOne}
--                    </div>
--                  </li>
--                  <li>
--                    <cr-icon icon="settings20:download" aria-hidden="true">
--                    </cr-icon>
--                    <div class="secondary">
--                      $i18n{safeBrowsingEnhancedWhenOnBulTwo}
--                    </div>
--                  </li>
--                  <li>
--                    <cr-icon icon="settings20:gshield" aria-hidden="true">
--                    </cr-icon>
--                    <div class="secondary">
--                      $i18n{safeBrowsingEnhancedWhenOnBulThree}
--                    </div>
--                  </li>
--                  <li>
--                    <cr-icon icon="settings:language" aria-hidden="true">
--                    </cr-icon>
--                    <div class="secondary">
--                      $i18n{safeBrowsingEnhancedWhenOnBulFour}
--                    </div>
--                  </li>
--                </ul>
--              </div>
--              <div class="column">
--                <h3 class="description-header">
--                  $i18n{columnHeadingConsider}
--                </h3>
--                <ul class="icon-bulleted-list">
--                  <li>
--                    <cr-icon icon="settings20:link"></cr-icon>
--                    <div class="cr-secondary-text">
--                      $i18n{safeBrowsingEnhancedThingsToConsiderBulOne}
--                    </div>
--                  </li>
--                  <li>
--                    <cr-icon icon="settings20:account-circle"></cr-icon>
--                    <div class="cr-secondary-text">
--                      $i18n{safeBrowsingEnhancedThingsToConsiderBulTwo}
--                    </div>
--                  </li>
--                  <li>
--                    <cr-icon icon="settings:speed"></cr-icon>
--                    <div class="cr-secondary-text">
--                      $i18n{safeBrowsingEnhancedThingsToConsiderBulThree}
--                    </div>
--                  </li>
--                </ul>
--              </div>
--            </div>
--            <div id="learnMoreLabelContainer">
--              <div class="cr-secondary-text">
--                $i18nRaw{safeBrowsingEnhancedLearnMoreLabel}
--              </div>
--            </div>
--          </div>
--        </settings-collapse-radio-button>
--        <settings-collapse-radio-button id="safeBrowsingStandard"
--            no-collapse="[[hideExtendedReportingRadioButton_]]"
--            name="[[safeBrowsingSettingEnum_.STANDARD]]"
--            pref="[[prefs.generated.safe_browsing]]"
--            label="$i18n{safeBrowsingStandard}"
--            sub-label="[[getSafeBrowsingStandardSubLabel_(
--                        enableHashPrefixRealTimeLookups_)]]"
--            indicator-aria-label="$i18n{controlledSettingPolicy}"
--            expand-aria-label="$i18n{safeBrowsingStandardExpandA11yLabel}"
--            info-opened="{{infoOpened_}}"
--            on-expand-clicked="onStandardProtectionExpandButtonClicked_"
--            no-automatic-collapse>
--          <div slot="noSelectionCollapse">
--            <template is="dom-if" if="[[!hideExtendedReportingRadioButton_]]">
--              <settings-toggle-button id="safeBrowsingReportingToggle"
--                pref="{{prefs.safebrowsing.scout_reporting_enabled}}"
--                label="$i18n{safeBrowsingStandardReportingLabel}"
--                sub-label="$i18n{safeBrowsingEnableExtendedReportingDesc}"
--                on-change="onSafeBrowsingExtendedReportingChange_"
--                disabled="[[getDisabledExtendedSafeBrowsing_(
--                              prefs.generated.safe_browsing.*)]]">
--              </settings-toggle-button>
--            </template>
--          </div>
--        </settings-collapse-radio-button>
--        <settings-collapse-radio-button id="safeBrowsingDisabled" no-collapse
--            name="[[safeBrowsingSettingEnum_.DISABLED]]"
--            pref="[[prefs.generated.safe_browsing]]"
--            label="$i18n{safeBrowsingNone}"
--            sub-label="$i18n{safeBrowsingNoneDesc}"
--            indicator-aria-label="$i18n{controlledSettingPolicy}">
--        </settings-collapse-radio-button>
--      </settings-radio-group>
--    </div>
++<if expr="is_chromeos">
+     <div id="safeBrowsingSection">
+       <h2 class="cr-title-text">$i18n{safeBrowsingSectionLabel}</h2>
+       <settings-radio-group id="safeBrowsingRadioGroup" no-set-pref
+@@ -193,6 +198,7 @@
+         </settings-collapse-radio-button>
+       </settings-radio-group>
+     </div>
++</if> <!-- chromeos -->
      <template is="dom-if" if="[[enableHttpsFirstModeNewSettings_]]" restamp>
        <div id="secureConnectionsSection">
          <h2 class="cr-title-text">$i18n{secureConnectionsSectionTitle}</h2>
-@@ -233,15 +117,8 @@
+@@ -233,8 +239,9 @@
        </div>
      </template>
      <div class="cr-row first">
 -      <h2 class="cr-title-text">$i18n{advancedPageTitle}</h2>
 +      <h2 class="cr-title-text">$i18n{securityPageTitle}</h2>
      </div>
--    <settings-toggle-button id="passwordsLeakToggle"
--          label="$i18n{passwordsLeakDetectionLabel}"
--          pref="{{prefs.generated.password_leak_detection}}"
--          sub-label="[[getPasswordsLeakToggleSubLabel_(
--                        prefs.profile.password_manager_leak_detection.*,
--                        prefs.generated.password_leak_detection.*)]]">
--    </settings-toggle-button>
++<if expr="is_chromeos">
+     <settings-toggle-button id="passwordsLeakToggle"
+           label="$i18n{passwordsLeakDetectionLabel}"
+           pref="{{prefs.generated.password_leak_detection}}"
+@@ -242,6 +249,7 @@
+                         prefs.profile.password_manager_leak_detection.*,
+                         prefs.generated.password_leak_detection.*)]]">
+     </settings-toggle-button>
++</if>
      <template is="dom-if" if="[[!enableHttpsFirstModeNewSettings_]]" restamp>
        <settings-toggle-button id="httpsOnlyModeToggle"
            pref="{{prefs.generated.https_first_mode_enabled}}"
-@@ -292,18 +169,46 @@
+@@ -292,6 +300,7 @@
          on-click="onManageCertificatesClick_" external>
      </cr-link-row>
 
--    <cr-link-row id="advancedProtectionProgramLink" class="hr"
--        label="$i18n{advancedProtectionProgramTitle}"
--        sub-label="$i18n{advancedProtectionProgramDesc}"
--        on-click="onAdvancedProtectionProgramLinkClick_"
--        external>
--    </cr-link-row>
--    <template is="dom-if" if="[[showDisableSafebrowsingDialog_]]" restamp>
--      <settings-simple-confirmation-dialog
--          title-text="$i18n{safeBrowsingDisableDialog}"
--          body-text="$i18n{safeBrowsingDisableDialogDesc}"
--          confirm-text="$i18n{safeBrowsingDisableDialogConfirm}"
--          on-close="onDisableSafebrowsingDialogClose_">
--      </settings-simple-confirmation-dialog>
--    </template>
++<if expr="is_chromeos">
+     <cr-link-row id="advancedProtectionProgramLink" class="hr"
+         label="$i18n{advancedProtectionProgramTitle}"
+         sub-label="$i18n{advancedProtectionProgramDesc}"
+@@ -306,4 +315,47 @@
+           on-close="onDisableSafebrowsingDialogClose_">
+       </settings-simple-confirmation-dialog>
+     </template>
++</if>
 +    <div id="hardeningSection">
 +      <div class="cr-row first"><h2 class="cr-title-text">Hardening</h2></div>
 +      <settings-toggle-button class="cr-row first"
