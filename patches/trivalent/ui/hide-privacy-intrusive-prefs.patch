@@ -96,7 +96,7 @@ index 98e81d33d5..ce6f4e65a7 100644
    }
 
 -  if (visibility.ai !== false && loadTimeData.getBoolean('showAiPage')) {
-+  if (false)) {
++  if (false) {
      r.AI = r.BASIC.createSection(
          '/ai', 'ai', loadTimeData.getString('aiPageTitle'));
      if (loadTimeData.getBoolean('enableAiModeSearchSetting')) {
@@ -105,7 +105,7 @@ index 98e81d33d5..ce6f4e65a7 100644
          r.YOUR_SAVED_INFO_SHOPPING = r.YOUR_SAVED_INFO.createChild('/shopping');
        }
 -      if (loadTimeData.getBoolean('showSuggestionsFromGeminiSettings')) {
-+      if (false)) {
++      if (false) {
          r.SUGGESTIONS_FROM_GEMINI =
              r.YOUR_SAVED_INFO.createChild('/enhancedAutofill');
        }
@@ -114,7 +114,7 @@ index 98e81d33d5..ce6f4e65a7 100644
      r.ADDRESSES = r.AUTOFILL.createChild('/addresses');
 
 -    if (loadTimeData.getBoolean('showAutofillAiControl')) {
-+    if (false)) {
++    if (false) {
        r.AUTOFILL_AI = r.AUTOFILL.createChild('/enhancedAutofill');
      }
  
