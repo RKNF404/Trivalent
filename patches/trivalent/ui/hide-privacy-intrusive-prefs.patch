@@ -61,71 +61,62 @@ index 158cc88454..8322d7a327 100644
        $i18nRaw{resetPageFeedback}
      </cr-checkbox>
    </div>
+diff --git a/chrome/browser/resources/settings/privacy_page/personalization_options.html b/chrome/browser/resources/settings/privacy_page/personalization_options.html
+index 50a3c35672..da855e05a0 100644
+--- a/chrome/browser/resources/settings/privacy_page/personalization_options.html
++++ b/chrome/browser/resources/settings/privacy_page/personalization_options.html
+@@ -24,7 +24,7 @@
+
+     </style>
+
+-<if expr="not is_chromeos">
++<if expr="is_chromeos">
+     <div id="chromeSigninUserChoiceSetting" class="hr cr-row" role="group"
+         hidden="[[!chromeSigninUserChoiceInfo_.shouldShowSettings]]"
+         aria-label="$i18n{chromeSigninChoiceTitle}">
+@@ -64,7 +64,6 @@
+         on-settings-boolean-control-change="onSigninAllowedChange_"
+         no-set-pref>
+     </settings-toggle-button>
+-</if><!-- not chromeos -->
+ <if expr="_google_chrome">
+ <if expr="is_chromeos">
+     <!-- Ash Browser settings show a link to the OS settings instead. -->
+@@ -175,3 +174,4 @@
+       <div>$i18n{chromeSigninChoiceToast}</div>
+     </cr-toast>
+ </if>
++</if><!-- chromeos -->
 diff --git a/chrome/browser/resources/settings/route.ts b/chrome/browser/resources/settings/route.ts
-index 98e81d33d5..ddb79ceb20 100644
+index 98e81d33d5..ce6f4e65a7 100644
 --- a/chrome/browser/resources/settings/route.ts
 +++ b/chrome/browser/resources/settings/route.ts
-@@ -171,38 +171,6 @@ function createRoutes(): SettingsRoutes {
-     r.IMPORT_DATA.isNavigableDialog = true;
-     r.MANAGE_PROFILE = r.PEOPLE.createChild('/manageProfile');
-     // </if>
--
--    r.SYNC = r.PEOPLE.createChild('/syncSetup');
--    r.SYNC_ADVANCED = r.SYNC.createChild('/syncSetup/advanced');
--  }
--
--  if (visibility.ai !== false && loadTimeData.getBoolean('showAiPage')) {
--    r.AI = r.BASIC.createSection(
--        '/ai', 'ai', loadTimeData.getString('aiPageTitle'));
--    if (loadTimeData.getBoolean('enableAiModeSearchSetting')) {
--      r.AI_MODE_SEARCH = r.AI.createChild('/ai/aiModeSearch');
--    }
--    if (loadTimeData.getBoolean('showHistorySearchControl')) {
--      r.HISTORY_SEARCH = r.AI.createChild('/ai/historySearch');
--    }
--    if (loadTimeData.getBoolean('showComposeControl')) {
--      r.OFFER_WRITING_HELP = r.AI.createChild('/ai/helpMeWrite');
--    }
--    if (loadTimeData.getBoolean('showGlicSettings')) {
--      r.GEMINI = r.AI.createChild('/ai/gemini');
--      if (loadTimeData.getBoolean('actorLoginFederatedLoginSupportEnabled')) {
--        r.GEMINI_LOGIN = r.GEMINI.createChild('/ai/gemini/login');
--      }
--    }
--    if (loadTimeData.getBoolean('showAiSuggestionsControl')) {
--      r.AI_SUGGESTIONS = r.AI.createChild('/ai/suggestions');
--    }
--    if (loadTimeData.getBoolean('showSkillsSettingPage')) {
--      r.SKILLS = r.AI.createChild('/ai/skills');
--    }
--    if (loadTimeData.getBoolean('showDictationControl')) {
--      r.DICTATION = r.AI.createChild('/ai/dictation');
--    }
+@@ -176,7 +176,7 @@ function createRoutes(): SettingsRoutes {
+     r.SYNC_ADVANCED = r.SYNC.createChild('/syncSetup/advanced');
    }
 
-   if (visibility.appearance !== false) {
-@@ -227,10 +195,6 @@ function createRoutes(): SettingsRoutes {
+-  if (visibility.ai !== false && loadTimeData.getBoolean('showAiPage')) {
++  if (false)) {
+     r.AI = r.BASIC.createSection(
+         '/ai', 'ai', loadTimeData.getString('aiPageTitle'));
+     if (loadTimeData.getBoolean('enableAiModeSearchSetting')) {
+@@ -227,7 +227,7 @@ function createRoutes(): SettingsRoutes {
        if (loadTimeData.getBoolean('shoppingIntegrationEnabled')) {
          r.YOUR_SAVED_INFO_SHOPPING = r.YOUR_SAVED_INFO.createChild('/shopping');
        }
 -      if (loadTimeData.getBoolean('showSuggestionsFromGeminiSettings')) {
--        r.SUGGESTIONS_FROM_GEMINI =
--            r.YOUR_SAVED_INFO.createChild('/enhancedAutofill');
--      }
-       // <if expr="is_win or is_macosx">
-       r.PASSKEYS = r.YOUR_SAVED_INFO.createChild('/passkeys');
-       // </if>
-@@ -241,10 +205,6 @@ function createRoutes(): SettingsRoutes {
++      if (false)) {
+         r.SUGGESTIONS_FROM_GEMINI =
+             r.YOUR_SAVED_INFO.createChild('/enhancedAutofill');
+       }
+@@ -241,7 +241,7 @@ function createRoutes(): SettingsRoutes {
      r.PAYMENTS = r.AUTOFILL.createChild('/payments');
      r.ADDRESSES = r.AUTOFILL.createChild('/addresses');
 
 -    if (loadTimeData.getBoolean('showAutofillAiControl')) {
--      r.AUTOFILL_AI = r.AUTOFILL.createChild('/enhancedAutofill');
--    }
--
-     // <if expr="is_win or is_macosx">
-     r.PASSKEYS = r.AUTOFILL.createChild('/passkeys');
-     // </if>
++    if (false)) {
+       r.AUTOFILL_AI = r.AUTOFILL.createChild('/enhancedAutofill');
+     }
 diff --git a/chrome/browser/resources/settings/lazy_load.ts b/chrome/browser/resources/settings/lazy_load.ts
 index dfbcef6b17..ba28122f24 100644
 --- a/chrome/browser/resources/settings/lazy_load.ts
