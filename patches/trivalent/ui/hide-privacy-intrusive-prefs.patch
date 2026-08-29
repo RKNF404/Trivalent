@@ -117,6 +117,7 @@ index 98e81d33d5..ce6f4e65a7 100644
 +    if (false)) {
        r.AUTOFILL_AI = r.AUTOFILL.createChild('/enhancedAutofill');
      }
+ 
 diff --git a/chrome/browser/ui/webui/settings/settings_ui.cc b/chrome/browser/ui/webui/settings/settings_ui.cc
 index dc64cf060b..11f88f4f21 100644
 --- a/chrome/browser/ui/webui/settings/settings_ui.cc
