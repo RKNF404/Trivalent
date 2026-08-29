@@ -10,44 +10,6 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
-diff --git a/chrome/browser/resources/settings/site_settings/v8_page.html b/chrome/browser/resources/settings/site_settings/v8_page.html
-index 4c9fb387a8..50a7b6ec05 100644
---- a/chrome/browser/resources/settings/site_settings/v8_page.html
-+++ b/chrome/browser/resources/settings/site_settings/v8_page.html
-@@ -25,17 +25,6 @@
-           sub-label="$i18n{siteSettingsJavascriptOptimizerAllowedSubLabel}"
-           no-collapse>
-       </settings-collapse-radio-button>
--      <settings-collapse-radio-button
--          id="blockForUnfamiliarSites"
--          class="two-line"
--          name="[[
--              javascriptOptimizerSettingEnum_.BLOCKED_FOR_UNFAMILIAR_SITES]]"
--          pref="[[prefs.generated.javascript_optimizer]]"
--          label="$i18n{siteSettingsJavascriptOptimizerBlockedUnfamiliarSites}"
--          sub-label="[[getBlockForUnfamiliarSitesSubLabel_(
--              prefs.generated.javascript_optimizer.value)]]"
--          no-collapse>
--      </settings-collapse-radio-button>
-       <settings-collapse-radio-button
-           id="blockForAllSites"
-           class="two-line"
-diff --git a/chrome/browser/resources/settings/languages_page/translate_page.html b/chrome/browser/resources/settings/languages_page/translate_page.html
-index 47ee2c73fc844..575caacdb6afe 100644
---- a/chrome/browser/resources/settings/languages_page/translate_page.html
-+++ b/chrome/browser/resources/settings/languages_page/translate_page.html
-@@ -1,11 +1,4 @@
- <style include="cr-shared-style settings-shared md-select"></style>
--<settings-section page-title="$i18n{translatePageTitle}">
--<settings-toggle-button id="offerTranslateOtherLanguages"
--    pref="{{prefs.translate.enabled}}"
--    label="$i18n{offerToEnableTranslate}"
--    sub-label="$i18n{offerToEnableTranslateSublabel}"
--    on-settings-boolean-control-change="onTranslateToggleChange_">
--</settings-toggle-button>
- <cr-collapse opened="[[prefs.translate.enabled.value]]">
-   <div class="cr-row continuation">
-     <div id="targetLanguageLabel" class="flex cr-padded-text"
 diff --git a/chrome/browser/resources/settings/privacy_page/privacy_page_index.html b/chrome/browser/resources/settings/privacy_page/privacy_page_index.html
 index 3692a01c1e..4ba109b3d8 100644
 --- a/chrome/browser/resources/settings/privacy_page/privacy_page_index.html
@@ -71,7 +33,7 @@ index 3692a01c1e..4ba109b3d8 100644
            route-path$="[[routes_.SAFETY_HUB.path]]">
        </settings-safety-hub-page>
 diff --git a/chrome/browser/resources/settings/a11y_page/live_translate.html.ts b/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
-index 94859e1cb8..852ba00445 100644
+index 94859e1cb8..bc57e3f578 100644
 --- a/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
 +++ b/chrome/browser/resources/settings/a11y_page/live_translate.html.ts
 @@ -9,7 +9,7 @@ import type {SettingsLiveTranslateElement} from './live_translate.js';
@@ -83,56 +45,74 @@ index 94859e1cb8..852ba00445 100644
    <settings-toggle-button id="liveTranslateToggleButton"
        pref-key="accessibility.captions.live_translate_enabled"
        @change="${this.onLiveTranslateEnabledChange_}"
-@@ -17,22 +17,6 @@ export function getHtml(this: SettingsLiveTranslateElement) {
+@@ -17,6 +17,7 @@ export function getHtml(this: SettingsLiveTranslateElement) {
        sub-label="$i18n{captionsEnableLiveTranslateSubtitle}">
    </settings-toggle-button>
  </div>
--<cr-collapse ?opened="${this.isLiveTranslateEnabled_}">
--  <div class="cr-row continuation subsection-group">
--    <div class="start cr-padded-text" aria-hidden="true">
--        $i18n{captionsLiveTranslateTargetLanguage}
--        <div class="secondary">
--          $i18n{captionsLiveTranslateTargetLanguageSubtitle}
--        </div>
--    </div>
--    <settings-dropdown-menu id="targetLanguageDropdown"
--        class="language-dropdown"
--        pref-key="accessibility.captions.live_translate_target_language"
--        .menuOptions="${this.translatableLanguages_}"
--        label="$i18n{captionsLiveTranslateTargetLanguage}">
--    </settings-dropdown-menu>
--  </div>
--</cr-collapse>
++<if expr="is_chromeos">
+ <cr-collapse ?opened="${this.isLiveTranslateEnabled_}">
+   <div class="cr-row continuation subsection-group">
+     <div class="start cr-padded-text" aria-hidden="true">
+@@ -33,6 +34,7 @@ export function getHtml(this: SettingsLiveTranslateElement) {
+     </settings-dropdown-menu>
+   </div>
+ </cr-collapse>
++</if>
  <!--_html_template_end_-->`;
    // clang-format on
  }
+diff --git a/chrome/browser/resources/settings/languages_page/translate_page.html b/chrome/browser/resources/settings/languages_page/translate_page.html
+index 47ee2c73fc..aa8570be48 100644
+--- a/chrome/browser/resources/settings/languages_page/translate_page.html
++++ b/chrome/browser/resources/settings/languages_page/translate_page.html
+@@ -1,4 +1,5 @@
+ <style include="cr-shared-style settings-shared md-select"></style>
++<if expr="is_chromeos">
+ <settings-section page-title="$i18n{translatePageTitle}">
+ <settings-toggle-button id="offerTranslateOtherLanguages"
+     pref="{{prefs.translate.enabled}}"
+@@ -6,6 +7,7 @@
+     sub-label="$i18n{offerToEnableTranslateSublabel}"
+     on-settings-boolean-control-change="onTranslateToggleChange_">
+ </settings-toggle-button>
++</if>
+ <cr-collapse opened="[[prefs.translate.enabled.value]]">
+   <div class="cr-row continuation">
+     <div id="targetLanguageLabel" class="flex cr-padded-text"
+diff --git a/chrome/browser/resources/settings/site_settings/v8_page.html b/chrome/browser/resources/settings/site_settings/v8_page.html
+index 4c9fb387a8..a1182f5726 100644
+--- a/chrome/browser/resources/settings/site_settings/v8_page.html
++++ b/chrome/browser/resources/settings/site_settings/v8_page.html
+@@ -25,6 +25,7 @@
+           sub-label="$i18n{siteSettingsJavascriptOptimizerAllowedSubLabel}"
+           no-collapse>
+       </settings-collapse-radio-button>
++<if expr="is_chromeos">
+       <settings-collapse-radio-button
+           id="blockForUnfamiliarSites"
+           class="two-line"
+@@ -36,6 +37,7 @@
+               prefs.generated.javascript_optimizer.value)]]"
+           no-collapse>
+       </settings-collapse-radio-button>
++</if>
+       <settings-collapse-radio-button
+           id="blockForAllSites"
+           class="two-line"
 diff --git a/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html b/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
-index dbc3c7435e..c178b5ebea 100644
+index dbc3c7435e..2985e57a06 100644
 --- a/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
 +++ b/chrome/browser/resources/settings/your_saved_info_page/your_saved_info_page.html
-@@ -120,25 +120,3 @@
-     </div>
+@@ -121,6 +121,7 @@
    </template>
  </div>
--
--<settings-section page-title="$i18n{yourSavedInfoAutofillSettingsLabel}">
--  <collapsible-autofill-settings-card prefs="{{prefs}}">
--  </collapsible-autofill-settings-card>
--</settings-section>
--
--<settings-section page-title="$i18n{yourSavedInfoRelatedServicesTitle}">
--  <div route-path="default">
--    <cr-link-row id="passwordManagerButton" label="$i18n{localPasswordManager}"
--        on-click="onPasswordManagerRelatedServiceClick_"
--        start-icon="cr20:password" external>
--    </cr-link-row>
--    <cr-link-row id="googleWalletButton" label="$i18n{googleWalletTitle}"
--        on-click="onGoogleWalletRelatedServiceClick_"
--        start-icon="settings20:wallet" external>
--    </cr-link-row>
--    <cr-link-row id="googleAccountButton" label="$i18n{googleAccount}"
--        on-click="onGoogleAccountRelatedServiceClick_"
--        start-icon="settings20:google" external>
--    </cr-link-row>
--  </div>
--</settings-section>
+
++<if expr="is_chromeos">
+ <settings-section page-title="$i18n{yourSavedInfoAutofillSettingsLabel}">
+   <collapsible-autofill-settings-card prefs="{{prefs}}">
+   </collapsible-autofill-settings-card>
+@@ -142,3 +143,4 @@
+     </cr-link-row>
+   </div>
+ </settings-section>
++</if>
