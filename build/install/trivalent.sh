@@ -117,7 +117,7 @@ if [[ -r "/etc/ld.so.preload" ]]; then # if the file doesn't exist, bwrap will e
   BWRAP_ARGS+=('--ro-bind-try' '/dev/null' '/etc/ld.so.preload')
 fi
 # Avoid issues with other applications messing with cache
-BWRAP_ARGS+=('--bind' "${TMPFS_CACHE_DIR}" "${XDG_CACHE_HOME:-"${HOME}/.cache"}")
+BWRAP_ARGS+=('--setenv' 'XDG_CACHE_HOME' "${TMPFS_CACHE_DIR}")
 # Avoid issues with glycin
 BWRAP_ARGS+=('--setenv' 'GDK_DISABLE' 'icon-nodes')
 
