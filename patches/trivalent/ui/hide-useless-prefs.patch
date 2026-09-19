@@ -49,7 +49,7 @@ index 94859e1cb8..bc57e3f578 100644
        sub-label="$i18n{captionsEnableLiveTranslateSubtitle}">
    </settings-toggle-button>
  </div>
-+<if expr="not is_linux">
++<if expr="not is_linux and is_linux">
  <cr-collapse ?opened="${this.isLiveTranslateEnabled_}">
    <div class="cr-row continuation subsection-group">
      <div class="start cr-padded-text" aria-hidden="true">
@@ -69,7 +69,7 @@ index ea471ade16..d2bb45f62b 100644
    }
  </style>
 
-+<if expr="not is_linux">
++<if expr="not is_linux and is_linux">
  <cr-expand-button class="cr-row first" expanded="{{expanded_}}">
    <div id="header-text">
      <div>$i18n{yourSavedInfoAutofillSettingsLabel}</div>
@@ -86,7 +86,7 @@ index 69bd00f7ae..969891eeaa 100644
 
  export function getHtml(this: SettingsTranslatePageElement) {
    return html`<!--_html_template_start_-->
-+<if expr="not is_linux">
++<if expr="not is_linux and is_linux">
  <settings-section page-title="$i18n{translatePageTitle}">
  <settings-toggle-button id="offerTranslateOtherLanguages"
      pref-key="translate.enabled"
@@ -106,7 +106,7 @@ index 4c9fb387a8..a1182f5726 100644
            sub-label="$i18n{siteSettingsJavascriptOptimizerAllowedSubLabel}"
            no-collapse>
        </settings-collapse-radio-button>
-+<if expr="not is_linux">
++<if expr="not is_linux and is_linux">
        <settings-collapse-radio-button
            id="blockForUnfamiliarSites"
            class="two-line"
