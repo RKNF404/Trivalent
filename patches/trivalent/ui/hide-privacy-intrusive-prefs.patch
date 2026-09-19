@@ -18,7 +18,7 @@ index b3303085ac..80407cfcbe 100644
            </div>
          </cr-link-row>
 
-+<if expr="is_chromeos">
++<if expr="not is_linux and is_linux">
          <cr-link-row id="sync-setup"
              label="$i18n{syncAndNonPersonalizedServices}"
              .subLabel="${this.getSyncAndNonPersonalizedServicesSubtext_()}"
@@ -29,7 +29,7 @@ index b3303085ac..80407cfcbe 100644
 +</if>
 
  <if expr="not is_chromeos">
-+<if expr="is_chromeos">
++<if expr="not is_linux and is_linux">
          ${this.signinAllowed_ ? html`
            <cr-link-row id="manage-google-account"
                label="$i18n{manageGoogleAccount}"
