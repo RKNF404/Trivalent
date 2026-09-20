@@ -19,7 +19,7 @@ index e1da11405c..254c14e46f 100644
        # doesn't use x18 by default. On other OSs adding "-ffixed-x18" might be
        # required.
 -      assert(is_android)
-+      assert((is_android || is_linux) && target_cpu == "arm64")
++      assert((is_android || is_linux) && current_cpu == "arm64")
  
        scs_parameters = [
          "-fsanitize=shadow-call-stack",
