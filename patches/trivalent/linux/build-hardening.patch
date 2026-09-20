@@ -58,7 +58,7 @@ index ccfe9692ba..ceb8b959fe 100644
      }
    }
 
-+  if (is_linux)
++  if (is_linux) {
 +    cflags += [
 +      "-fstack-clash-protection",
 +      "-mharden-sls=all",
