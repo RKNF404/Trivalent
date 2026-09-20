@@ -19,7 +19,7 @@ index ccfe9692ba..ceb8b959fe 100644
      # as a stronger alternative to StackProtector, so we give SCS precedence
      # over SP.
 -    if (enable_shadow_call_stack) {
-+    if (enable_shadow_call_stack && current_cpu == "arm64" && target_cpu == "arm64") {
++    if (enable_shadow_call_stack && current_cpu == "arm64") {
        # On Aarch64, SCS requires the x18 register to be unused because it will
        # hold a pointer to the shadow stack. For Android we know that Clang
        # doesn't use x18 by default. On other OSs adding "-ffixed-x18" might be
