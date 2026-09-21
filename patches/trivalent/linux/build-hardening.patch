@@ -120,7 +120,7 @@ index e092782740..4f9b611186 100644
 -      cflags += [ "-mbranch-protection=standard" ]
 -      asmflags += [ "-mbranch-protection=standard" ]
 +      cflags += [ "-mbranch-protection=bti+pac-ret+leaf+gcs" ]
-+      asmflags += [ "-mbranch-protection=bti+pac-ret+leaf+gcs" ]
++      asmflags += [ "-mbranch-protection=standard" ]
 +      rustflags += [ "-Zbranch-protection=bti,pac-ret,leaf,gcs" ]
      } else if (arm_control_flow_integrity == "pac") {
        cflags += [ "-mbranch-protection=pac-ret" ]
