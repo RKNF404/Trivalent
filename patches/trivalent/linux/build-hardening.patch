@@ -30,7 +30,7 @@ index ccfe9692ba..ceb8b959fe 100644
        scs_parameters = [
          "-fsanitize=shadow-call-stack",
 -        "-fno-stack-protector",
-+        "-fstack-protector-stong",
++        "-fstack-protector-strong",
        ]
 +      rs_scs_params = [
 +        "-Zsanitizer=shadow-call-stack",
