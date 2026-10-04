@@ -77,7 +77,7 @@ index 69bd00f7ae..2711207bfb 100644
    <div class="cr-row continuation">
      <div id="targetLanguageLabel" class="flex cr-padded-text"
 diff --git a/chrome/browser/resources/settings/privacy_page/privacy_page_index.html b/chrome/browser/resources/settings/privacy_page/privacy_page_index.html
-index 10ce6554c5..8cc6bca21b 100644
+index 6714f1eb10..6ac6c53a76 100644
 --- a/chrome/browser/resources/settings/privacy_page/privacy_page_index.html
 +++ b/chrome/browser/resources/settings/privacy_page/privacy_page_index.html
 @@ -25,7 +25,7 @@
@@ -88,14 +88,14 @@ index 10ce6554c5..8cc6bca21b 100644
 +      <settings-safety-hub-entry-point style="display:none" slot="view" id="safetyHubEntryPoint">
        </settings-safety-hub-entry-point>
      </template>
- 
+
 @@ -33,7 +33,7 @@
          routes_.SAFETY_HUB, currentRoute, inSearchMode)]]"
          update-when-false>
        <!-- TODO(crbug.com/40267370): Make the page searchable.-->
 -      <settings-safety-hub-page slot="view" id="safetyHub" no-search
 +      <settings-safety-hub-page style="display:none" slot="view" id="safetyHub" no-search
-           data-parent-view-id="safetyHubEntryPoint" prefs="{{prefs}}"
+           data-parent-view-id="safetyHubEntryPoint"
            route-path$="[[routes_.SAFETY_HUB.path]]">
        </settings-safety-hub-page>
 diff --git a/chrome/browser/resources/settings/site_settings/v8_page.html b/chrome/browser/resources/settings/site_settings/v8_page.html
