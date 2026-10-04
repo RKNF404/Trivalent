@@ -34,28 +34,28 @@ index f5928ceb97..fd1b614065 100644
      if (params.attribute_names[i] == "src") {
        result.src_url = params.attribute_values[i].Utf8();
 diff --git a/pdf/pdf_features.cc b/pdf/pdf_features.cc
-index 7f0e882c06..813e8a05b4 100644
+index 7b96d86fc7..90fd8759af 100644
 --- a/pdf/pdf_features.cc
 +++ b/pdf/pdf_features.cc
-@@ -17,6 +17,8 @@ bool g_is_oopif_pdf_policy_enabled = true;
- 
- BASE_FEATURE(kAccessiblePDFForm, base::FEATURE_DISABLED_BY_DEFAULT);
- 
+@@ -97,6 +97,8 @@ const base::FeatureParam<std::string> kPdfSaveToDriveSurveyEnterpriseTriggerId{
+     &kPdfSaveToDriveSurvey, "enterprise-trigger-id", ""};
+ #endif  // BUILDFLAG(ENABLE_PDF_SAVE_TO_DRIVE)
+
 +BASE_FEATURE(kPdfJavaScript, base::FEATURE_DISABLED_BY_DEFAULT);
 +
- // Enables PDFium to support the experimental PDF 2.0 /BrotliDecode filter
- // allowing for PDFs encoded with Brotli to be viewable by Chrome's PDF
- // viewer. This flag would be enabled by default when the spec for
+ void SetIsOopifPdfPolicyEnabled(bool is_oopif_pdf_policy_enabled) {
+   g_is_oopif_pdf_policy_enabled = is_oopif_pdf_policy_enabled;
+ }
 diff --git a/pdf/pdf_features.h b/pdf/pdf_features.h
-index bce10e3a47..f89862c36d 100644
+index 74d95f3981..00d71488c1 100644
 --- a/pdf/pdf_features.h
 +++ b/pdf/pdf_features.h
-@@ -19,6 +19,8 @@ static_assert(BUILDFLAG(ENABLE_PDF), "ENABLE_PDF not set to true");
- 
- namespace chrome_pdf::features {
- 
+@@ -53,6 +53,8 @@ extern const base::FeatureParam<std::string>
+     kPdfSaveToDriveSurveyEnterpriseTriggerId;
+ #endif  // BUILDFLAG(ENABLE_PDF_SAVE_TO_DRIVE)
+
 +BASE_DECLARE_FEATURE(kPdfJavaScript);
 +
- BASE_DECLARE_FEATURE(kAccessiblePDFForm);
- BASE_DECLARE_FEATURE(kPdfBrotliDecode);
- BASE_DECLARE_FEATURE(kPdfBufferedPaintManager);
+ // Sets whether the OOPIF PDF policy enables the OOPIF PDF viewer. Otherwise,
+ // GuestView PDF viewer will be used. The policy is enabled by default.
+ void SetIsOopifPdfPolicyEnabled(bool is_oopif_pdf_policy_enabled);
