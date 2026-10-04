@@ -56,22 +56,24 @@ index ea471ade16..3609e96c74 100644
    </template>
  </cr-collapse>
 +</if>
-diff --git a/chrome/browser/resources/settings/languages_page/translate_page.html b/chrome/browser/resources/settings/languages_page/translate_page.html
-index ab5a8c7672..8a6adb3953 100644
---- a/chrome/browser/resources/settings/languages_page/translate_page.html
-+++ b/chrome/browser/resources/settings/languages_page/translate_page.html
-@@ -1,4 +1,5 @@
- <style include="cr-shared-style settings-shared md-select"></style>
+diff --git a/chrome/browser/resources/settings/languages_page/translate_page.html.ts b/chrome/browser/resources/settings/languages_page/translate_page.html.ts
+index 69bd00f7ae..2711207bfb 100644
+--- a/chrome/browser/resources/settings/languages_page/translate_page.html.ts
++++ b/chrome/browser/resources/settings/languages_page/translate_page.html.ts
+@@ -8,6 +8,7 @@ import type {SettingsTranslatePageElement} from './translate_page.js';
+
+ export function getHtml(this: SettingsTranslatePageElement) {
+   return html`<!--_html_template_start_-->
 +<if expr="not is_linux and is_linux">
  <settings-section page-title="$i18n{translatePageTitle}">
  <settings-toggle-button id="offerTranslateOtherLanguages"
      pref-key="translate.enabled"
-@@ -6,6 +7,7 @@
-     sub-label="$i18n{offerToEnableTranslateSublabel}"
-     on-settings-boolean-control-change="onTranslateToggleChange_">
+@@ -16,6 +17,7 @@ export function getHtml(this: SettingsTranslatePageElement) {
+     @settings-boolean-control-change="${
+         this.onOfferTranslateOtherLanguagesSettingsBooleanControlChange_}">
  </settings-toggle-button>
 +</if>
- <cr-collapse opened="[[translateEnabledPref_.value]]">
+ <cr-collapse ?opened="${!!this.translateEnabledPref_?.value}">
    <div class="cr-row continuation">
      <div id="targetLanguageLabel" class="flex cr-padded-text"
 diff --git a/chrome/browser/resources/settings/privacy_page/privacy_page_index.html b/chrome/browser/resources/settings/privacy_page/privacy_page_index.html
