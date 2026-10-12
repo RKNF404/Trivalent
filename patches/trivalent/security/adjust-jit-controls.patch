@@ -163,7 +163,7 @@ index dbf055eaae..2be026c304 100644
  // BEFORE MODIFYING THIS FILE: If your feature is only used inside content/, add
  // your feature in `content/common/features.h` instead.
 
-+CONTENT_EXPORT BASE_DECLARE_FEATURE(kEnableDrumbrake);
++CONTENT_EXPORT BASE_DECLARE_FEATURE(kJITControlBehavior);
 +
 +CONTENT_EXPORT extern const base::FeatureParam<bool>
 +    kEnableDrumbrakeCompat;
