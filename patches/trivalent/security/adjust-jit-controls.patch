@@ -92,7 +92,7 @@ index 4abe687249..ccce7a5b55 100644
 -                                 "--disable-optimizing-compilers");
 +                                 "--jitless");
 +#if V8_ENABLE_DRUMBRAKE
-+    if (base::FeatureList::IsEnabled(features::kEnableDrumbrake))
++    if (base::FeatureList::IsEnabled(features::kJITControlBehavior))
 +    {
 +      AppendToCommaSeparatedSwitch(command_line,
 +                                   blink::switches::kJavaScriptFlags,
@@ -103,19 +103,26 @@ index 4abe687249..ccce7a5b55 100644
  
    if (DisallowV8FeatureFlagOverrides()) {
 diff --git a/content/public/common/content_features.cc b/content/public/common/content_features.cc
-index b0162fdbdc..b2d291d8ea 100644
+index 499ba9f14a..7a722bbf74 100644
 --- a/content/public/common/content_features.cc
 +++ b/content/public/common/content_features.cc
-@@ -19,6 +19,8 @@ namespace features {
+@@ -24,6 +24,15 @@ namespace features {
 
  // All features in alphabetical order.
 
-+BASE_FEATURE(kEnableDrumbrake, base::FEATURE_DISABLED_BY_DEFAULT);
++BASE_FEATURE(kJITControlBehavior, base::FEATURE_DISABLED_BY_DEFAULT);
++
++const base::FeatureParam<bool> kEnableDrumbrakeCompat{
++      &kJITControlBehavior, "enable_drumbrake_compat", false};
++const base::FeatureParam<bool> kDisableOptimizersDefault{
++      &kJITControlBehavior, "disable_optimizers_default", false};
++const base::FeatureParam<bool> kFullJITlessWithDrumbrake{
++      &kJITControlBehavior, "full_jitless_with_drumbrake", false};
 +
  // Marks navigations as aborted when the NavigationHandle is destroyed mid
  // navigation, likely due to a tab closure. This is a kill switch.
  BASE_FEATURE(kAbortNavigationsFromTabClosures,
-@@ -1013,7 +1015,7 @@ BASE_FEATURE(kDisableProcessReuse, base::FEATURE_DISABLED_BY_DEFAULT);
+@@ -1188,7 +1197,7 @@ BASE_FEATURE(kDisableProcessReuse, base::FEATURE_DISABLED_BY_DEFAULT);
  // Controls whether SpareRenderProcessHostManager tries to always have a warm
  // spare renderer process around for the most recently requested BrowserContext.
  // This feature is only consulted in site-per-process mode.
@@ -125,14 +132,21 @@ index b0162fdbdc..b2d291d8ea 100644
  // Controls whether site isolation should use origins instead of scheme and
  // eTLD+1.
 diff --git a/content/public/common/content_features.h b/content/public/common/content_features.h
-index ae18db8a3d..5bbf28711b 100644
+index dbf055eaae..2be026c304 100644
 --- a/content/public/common/content_features.h
 +++ b/content/public/common/content_features.h
-@@ -24,6 +24,8 @@ namespace features {
+@@ -24,6 +24,15 @@ namespace features {
  // BEFORE MODIFYING THIS FILE: If your feature is only used inside content/, add
  // your feature in `content/common/features.h` instead.
 
 +CONTENT_EXPORT BASE_DECLARE_FEATURE(kEnableDrumbrake);
++
++CONTENT_EXPORT extern const base::FeatureParam<bool>
++    kEnableDrumbrakeCompat;
++CONTENT_EXPORT extern const base::FeatureParam<bool>
++    kDisableOptimizersDefault;
++CONTENT_EXPORT extern const base::FeatureParam<bool>
++    kFullJITlessWithDrumbrake;
 +
  // All features in alphabetical order. The features should be documented
  // alongside the definition of their values in the .cc file.
