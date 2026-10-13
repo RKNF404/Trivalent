@@ -85,7 +85,7 @@ diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content
 index 22bf8ff115..3e1f9151b9 100644
 --- a/content/browser/renderer_host/render_process_host_impl.cc
 +++ b/content/browser/renderer_host/render_process_host_impl.cc
-@@ -3815,13 +3815,39 @@ void RenderProcessHostImpl::AppendRendererCommandLine(
+@@ -3815,13 +3815,37 @@ void RenderProcessHostImpl::AppendRendererCommandLine(
      command_line->AppendSwitch(switches::kNoZygote);
    }
 
