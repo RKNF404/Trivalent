@@ -41,7 +41,7 @@ index b0b6bb4005..8beb9a421e 100644
  #if !BUILDFLAG(IS_ANDROID)
  const FeatureEntry::Choice kIwaKeyDistributionComponentExpCohortChoices[] = {
      {flags_ui::kGenericExperimentChoiceDisabled, "", ""},
-@@ -5140,6 +5160,80 @@ constexpr char kEnterpriseIsolatedModeInternalName[] =
+@@ -5140,6 +5160,81 @@ constexpr char kEnterpriseIsolatedModeInternalName[] =
 
  // When adding a new choice, add it to the end of the list.
  const FeatureEntry kFeatureEntries[] = {
