@@ -89,11 +89,11 @@ index 22bf8ff115..3e1f9151b9 100644
      command_line->AppendSwitch(switches::kNoZygote);
    }
 
-+  const bool kJITMitigationFeatureStatus = base::FeatureList::IsEnabled(
-+                                        features::kJITMitigationFeature);
-+  const bool kDrumbrakeAvailablility =
++  const bool kJITMitigationStatus = base::FeatureList::IsEnabled(
++                                          features::kJITMitigation);
++  const bool kDrumbrakeAvailability =
 +#if V8_ENABLE_DRUMBRAKE
-+    kJITMitigationFeatureStatus;
++    kJITMitigationStatus;
 +#else
 +    false;
 +#endif
@@ -105,18 +105,18 @@ index 22bf8ff115..3e1f9151b9 100644
                                   blink::switches::kJavaScriptFlags,
 -                                 "--disable-optimizing-compilers");
 +                                 "--jitless");
-+    if (kDrumbrakeAvailablility &&
++    if (kDrumbrakeAvailability &&
 +        features::kEnableDrumbrakeCompat.Get()) {
 +      AppendToCommaSeparatedSwitch(command_line,
 +                                   blink::switches::kJavaScriptFlags,
 +                                   "--wasm_jitless");
 +    }
-+  } else if (kDrumbrakeAvailablility &&
++  } else if (kDrumbrakeAvailability &&
 +             features::kFullJITlessWithDrumbrake.Get()) {
 +    AppendToCommaSeparatedSwitch(command_line,
 +                                 blink::switches::kJavaScriptFlags,
 +                                 "--jitless,--wasm_jitless");
-+  } else if (kJITMitigationFeatureStatus &&
++  } else if (kJITMitigationStatus &&
 +             features::kDisableOptimizersDefault.Get()) {
 +    AppendToCommaSeparatedSwitch(command_line,
 +                                 blink::switches::kJavaScriptFlags,
@@ -132,14 +132,14 @@ index 499ba9f14a..7a722bbf74 100644
 
  // All features in alphabetical order.
 
-+BASE_FEATURE(kJITMitigationFeature, base::FEATURE_DISABLED_BY_DEFAULT);
++BASE_FEATURE(kJITMitigation, base::FEATURE_DISABLED_BY_DEFAULT);
 +
 +const base::FeatureParam<bool> kEnableDrumbrakeCompat{
-+      &kJITMitigationFeature, "enable_drumbrake_compat", true};
++      &kJITMitigation, "enable_drumbrake_compat", true};
 +const base::FeatureParam<bool> kDisableOptimizersDefault{
-+      &kJITMitigationFeature, "disable_optimizers_default", false};
++      &kJITMitigation, "disable_optimizers_default", false};
 +const base::FeatureParam<bool> kFullJITlessWithDrumbrake{
-+      &kJITMitigationFeature, "full_jitless_with_drumbrake", false};
++      &kJITMitigation, "full_jitless_with_drumbrake", false};
 +
  // Marks navigations as aborted when the NavigationHandle is destroyed mid
  // navigation, likely due to a tab closure. This is a kill switch.
@@ -161,7 +161,7 @@ index dbf055eaae..2be026c304 100644
  // BEFORE MODIFYING THIS FILE: If your feature is only used inside content/, add
  // your feature in `content/common/features.h` instead.
 
-+CONTENT_EXPORT BASE_DECLARE_FEATURE(kJITMitigationFeature);
++CONTENT_EXPORT BASE_DECLARE_FEATURE(kJITMitigation);
 +
 +CONTENT_EXPORT extern const base::FeatureParam<bool>
 +    kEnableDrumbrakeCompat;
