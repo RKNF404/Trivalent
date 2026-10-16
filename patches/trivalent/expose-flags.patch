@@ -18,18 +18,18 @@ index b0b6bb4005..8beb9a421e 100644
       variations::switches::kEnableFieldTrialTestingConfig},
  };
 
-+const FeatureEntry::FeatureParam kJITControl_EnableDrumbrakeCompat[] = {
++const FeatureEntry::FeatureParam kJITMitigation_EnableDrumbrakeCompat[] = {
 +                    {"enable_drumbrake_compat", "true"}};
-+const FeatureEntry::FeatureParam kJITControl_DisableOptimizersDefault[] = {
++const FeatureEntry::FeatureParam kJITMitigation_DisableOptimizersDefault[] = {
 +                    {"disable_optimizers_default", "true"}.
 +                    {"enable_drumbrake_compat", "false"}};
-+const FeatureEntry::FeatureParam kJITControl_FullJITlessWithDrumbrake[] = {
++const FeatureEntry::FeatureParam kJITMitigation_FullJITlessWithDrumbrake[] = {
 +                    {"full_jitless_with_drumbrake", "true"},
 +                    {"enable_drumbrake_compat", "false"}};
-+const FeatureEntry::FeatureVariation kJITControlFeatureVariations[] = {
-+        {"with Drumbrake for Compatibility", kJITControl_EnableDrumbrakeCompat, nullptr},
-+        {"without JIT optimizers", kJITControl_DisableOptimizersDefault, nullptr},
-+        {"full JITless with Drumbrake", kJITControl_FullJITlessWithDrumbrake, nullptr}};
++const FeatureEntry::FeatureVariation kJITMitigationFeatureVariations[] = {
++        {"(with Drumbrake for Compatibility)", kJITMitigation_EnableDrumbrakeCompat, nullptr},
++        {"(without JIT optimizers)", kJITMitigation_DisableOptimizersDefault, nullptr},
++        {"(full JITless with Drumbrake)", kJITMitigation_FullJITlessWithDrumbrake, nullptr}};
 +
 +const char kScopeOmniboxAutocomplete[] = "scope-omnibox-autocomplete";
 +
@@ -43,7 +43,7 @@ index b0b6bb4005..8beb9a421e 100644
  #if !BUILDFLAG(IS_ANDROID)
  const FeatureEntry::Choice kIwaKeyDistributionComponentExpCohortChoices[] = {
      {flags_ui::kGenericExperimentChoiceDisabled, "", ""},
-@@ -5140,6 +5162,81 @@ constexpr char kEnterpriseIsolatedModeInternalName[] =
+@@ -5140,6 +5162,84 @@ constexpr char kEnterpriseIsolatedModeInternalName[] =
 
  // When adding a new choice, add it to the end of the list.
  const FeatureEntry kFeatureEntries[] = {
@@ -61,18 +61,21 @@ index b0b6bb4005..8beb9a421e 100644
 +     "Limit the scope categories of results that omnibox autocomplete can "
 +     "show. This flag is provided by Trivalent via Ungoogled Chromium.",
 +     kOsAll, MULTI_VALUE_TYPE(kScopeOmniboxAutocompleteChoices)},
-+    {"jit-control-feature", "JIT Control Behavior",
-+     "Configure the features of the JavaScript JIT permission toggle. "
-+     "When simply enabled or when enabled with Drumbrake Compat, enables "
-+     "JITless web assembly when JIT is disabled, does not affect JIT toggle "
-+     "enabled state. When enabled with Optimizers Disabled, high tier "
-+     "performance optimizers are disabled when JIT is available, does not "
-+     "affect JIT toggle disabled state. When enabled with full JITless and "
-+     "Drumbrake, JIT is disabled unconditionally but web assembly is "
-+     "available (without JIT) in the JIT toggled enabled state, does not "
-+     "affect JIT disabled state. This feature is provided by Trivalent.",
-+     kOsAll, FEATURE_WITH_PARAMS_VALUE_TYPE(features::kJITControlBehavior,
-+            kJITControlFeatureVariations, "JITControlBehavior")},
++    {"jit-mitigation-feature", "Adjust JIT Mitigation Behavior",
++     "This changes what the Javascript JIT per-site setting does when "
++     "enabled/disabled. When unchanged, by default sites without JIT can't "
++     "run web assembly (WASM), and sites with JIT get full JIT with WASM. "
++     "Changing this feature's state provides the following alternatives. "
++     "When Enabled or Enabled with Drumbrake for Compatibility, sites can "
++     "run WASM when JIT is disabled (via Drumbrake), sites with JIT allowed "
++     "are unaffected. When Enabled without JIT optimizers, sites with JIT "
++     "will run with worse performance in exchange for reduced security risk, "
++     "sites without JIT are unaffected. When Enabled full JITless with "
++     "Drumbrake, JIT is disallowed for all sites but when granting the JIT "
++     "permission they are permitted to run WASM, sites not granted the JIT "
++     "permission are not. This feature is provided by Trivalent."
++     kOsAll, FEATURE_WITH_PARAMS_VALUE_TYPE(features::kJITMitigationFeature,
++            kJITMitigationFeatureVariations, "JITMitigationBehavior")},
 +    {"show-punycode-domains", "Show punycode for IDN domains",
 +     "Shows punycode for IDN domains to mitigate IDN homograph attacks. "
 +     "Disabled by default. This feature is provided by Trivalent.",
