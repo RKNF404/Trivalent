@@ -375,15 +375,13 @@ index e263d95cc3..8359e1440d 100644
  namespace {
  
  void KillGpuProcessImpl(content::GpuProcessHost* host) {
-@@ -83,6 +87,25 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
+@@ -83,6 +87,23 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
    gpu_preferences.gpu_sandbox_start_early =
        command_line->HasSwitch(switches::kGpuSandboxStartEarly);
  
 +  gpu_preferences.gpu_sandbox_linux =
 +#if BUILDFLAG(IS_LINUX)
-+      command_line->HasSwitch("enable-gpu-sandbox-linux") &&
-+      command_line->HasSwitch("ozone-platform") &&
-+      command_line->GetSwitchValueASCII("ozone-platform") == "wayland";
++      command_line->HasSwitch("enable-gpu-sandbox-linux");
 +#else
 +      false;
 +#endif
@@ -488,7 +486,7 @@ index 09780f226f..b40e4392ec 100644
  bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
                                          const GpuPreferences& gpu_preferences) {
    TRACE_EVENT("gpu,startup", "gpu::GpuInit::InitializeAndStartSandbox");
-@@ -433,8 +445,21 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
+@@ -433,8 +445,22 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
    enable_watchdog = false;
  #endif
  
@@ -506,12 +504,13 @@ index 09780f226f..b40e4392ec 100644
 +    }
 +  }
 +  bool gpu_sandbox_start_early = gpu_preferences_.gpu_sandbox_start_early ||
-+      // The sandbox does not work with Vulkan currently
-+      (gpu_sandbox_linux && !features::IsUsingVulkan());
++      // The sandbox does not work with Vulkan currently or x11
++      (gpu_sandbox_linux && !features::IsUsingVulkan() &&
++       OzonePlatform::RunningOnWaylandForTest());
  #else   // !(BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS))
    // For some reasons MacOSX's VideoToolbox might crash when called after
    // initializing GL, see crbug.com/1047643 and crbug.com/871280. On other
-@@ -476,7 +501,7 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
+@@ -476,7 +502,7 @@ bool GpuInit::InitializeAndStartSandbox(base::CommandLine* command_line,
    // On Chrome OS ARM Mali, GPU driver userspace creates threads when
    // initializing a GL context, so start the sandbox early.
    // TODO(zmo): Need to collect OS version before this.
