@@ -89,11 +89,11 @@ index 22bf8ff115..3e1f9151b9 100644
      command_line->AppendSwitch(switches::kNoZygote);
    }
 
-+  const bool kJITBehaviorFeatureStatus = base::FeatureList::IsEnabled(
-+                                        features::kJITPermissionBehavior);
++  const bool kJITMitigationFeatureStatus = base::FeatureList::IsEnabled(
++                                        features::kJITMitigationSettings);
 +  const bool kDrumbrakeAvailablility =
 +#if V8_ENABLE_DRUMBRAKE
-+    kJITBehaviorFeatureStatus;
++    kJITMitigationFeatureStatus;
 +#else
 +    false;
 +#endif
@@ -116,7 +116,7 @@ index 22bf8ff115..3e1f9151b9 100644
 +    AppendToCommaSeparatedSwitch(command_line,
 +                                 blink::switches::kJavaScriptFlags,
 +                                 "--jitless,--wasm_jitless");
-+  } else if (kJITBehaviorFeatureStatus &&
++  } else if (kJITMitigationFeatureStatus &&
 +             features::kDisableOptimizersDefault.Get()) {
 +    AppendToCommaSeparatedSwitch(command_line,
 +                                 blink::switches::kJavaScriptFlags,
@@ -132,14 +132,14 @@ index 499ba9f14a..7a722bbf74 100644
 
  // All features in alphabetical order.
 
-+BASE_FEATURE(kJITPermissionBehavior, base::FEATURE_DISABLED_BY_DEFAULT);
++BASE_FEATURE(kJITMitigationSettings, base::FEATURE_DISABLED_BY_DEFAULT);
 +
 +const base::FeatureParam<bool> kEnableDrumbrakeCompat{
-+      &kJITPermissionBehavior, "enable_drumbrake_compat", true};
++      &kJITMitigationSettings, "enable_drumbrake_compat", true};
 +const base::FeatureParam<bool> kDisableOptimizersDefault{
-+      &kJITPermissionBehavior, "disable_optimizers_default", false};
++      &kJITMitigationSettings, "disable_optimizers_default", false};
 +const base::FeatureParam<bool> kFullJITlessWithDrumbrake{
-+      &kJITPermissionBehavior, "full_jitless_with_drumbrake", false};
++      &kJITMitigationSettings, "full_jitless_with_drumbrake", false};
 +
  // Marks navigations as aborted when the NavigationHandle is destroyed mid
  // navigation, likely due to a tab closure. This is a kill switch.
@@ -161,7 +161,7 @@ index dbf055eaae..2be026c304 100644
  // BEFORE MODIFYING THIS FILE: If your feature is only used inside content/, add
  // your feature in `content/common/features.h` instead.
 
-+CONTENT_EXPORT BASE_DECLARE_FEATURE(kJITPermissionBehavior);
++CONTENT_EXPORT BASE_DECLARE_FEATURE(kJITMitigationSettings);
 +
 +CONTENT_EXPORT extern const base::FeatureParam<bool>
 +    kEnableDrumbrakeCompat;
