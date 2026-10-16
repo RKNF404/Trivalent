@@ -533,18 +533,14 @@ index c4e4614eb8..8b2bf9aadf 100644
  
  // Define these so that unistd.h pulls in needed symbols.
  #if !defined(__ARCH_WANT_SYSCALL_NO_AT) || \
-@@ -29,7 +31,17 @@ CrosNvidiaGpuProcessPolicy::~CrosNvidiaGpuProcessPolicy() = default;
+@@ -29,7 +31,13 @@ CrosNvidiaGpuProcessPolicy::~CrosNvidiaGpuProcessPolicy() = default;
  ResultExpr CrosNvidiaGpuProcessPolicy::EvaluateSyscall(int sysno) const {
    switch (sysno) {
      case __NR_sched_setscheduler:
 +    case __NR_mprotect:
        return Allow();
 +    case __NR_mmap:
-+#if defined(__x86_64__)
 +      return RestrictMmapFlags(MAP_EXECUTABLE | MAP_32BIT);
-+#else
-+      return Allow();
-+#endif
 +    case __NR_memfd_create:
 +      // TODO(crbug.com/442771181)
 +      return RestrictMemfdCreateWithExecMappings();
@@ -555,31 +551,7 @@ diff --git a/sandbox/policy/linux/bpf_gpu_policy_linux.cc b/sandbox/policy/linux
 index 5725da248d..17c098db3f 100644
 --- a/sandbox/policy/linux/bpf_gpu_policy_linux.cc
 +++ b/sandbox/policy/linux/bpf_gpu_policy_linux.cc
-@@ -52,22 +52,8 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
-       return Error(ENOSYS);
- #if !BUILDFLAG(IS_CHROMEOS)
-     case __NR_fallocate:
--      return Allow();
- #endif  // BUILDFLAG(IS_CHROMEOS)
--    case __NR_fcntl: {
--      // The Nvidia driver uses flags not in the baseline policy
--      // fcntl(fd, F_ADD_SEALS, F_SEAL_SEAL | F_SEAL_SHRINK | F_SEAL_GROW)
--      // https://crbug.com/1128175
--      const Arg<unsigned int> cmd(1);
--      const Arg<unsigned long> arg(2);
--
--      const unsigned long kAllowedMask =
--          F_SEAL_SEAL | F_SEAL_SHRINK | F_SEAL_GROW;
--      BoolExpr add_seals =
--          AllOf(cmd == F_ADD_SEALS, (arg & ~kAllowedMask) == 0);
--
--      return If(add_seals, Allow()).Else(BPFBasePolicy::EvaluateSyscall(sysno));
--    }
-+    case __NR_fcntl:
-     case __NR_fdatasync:
-     case __NR_ftruncate:
- #if defined(__i386__) || defined(__arm__) || \
-@@ -80,17 +66,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
+@@ -80,17 +80,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
      case __NR_getdents64:
      case __NR_ioctl:
        return Allow();
@@ -597,7 +569,7 @@ index 5725da248d..17c098db3f 100644
      case __NR_mremap:
        if (mremap_policy_ == MremapPolicy::kAllow) {
          return RestrictMremapFlagsForODML();
-@@ -106,10 +81,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
+@@ -106,10 +95,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
        return RestrictSchedTarget(GetPolicyPid(), sysno);
      case __NR_prlimit64:
        return RestrictPrlimit64(GetPolicyPid());
