@@ -62,20 +62,20 @@ index b0b6bb4005..8beb9a421e 100644
 +     "show. This flag is provided by Trivalent via Ungoogled Chromium.",
 +     kOsAll, MULTI_VALUE_TYPE(kScopeOmniboxAutocompleteChoices)},
 +    {"jit-mitigation-feature", "Adjust JIT Mitigation Behavior",
-+     "This changes what the Javascript JIT per-site setting does when "
++     "This changes what the JavaScript JIT per-site setting does when "
 +     "enabled/disabled. When unchanged, by default sites without JIT can't "
-+     "run web assembly (WASM), and sites with JIT get full JIT with WASM. "
++     "run WebAssembly (WASM), and sites with JIT get full JIT with WASM. "
 +     "Changing this feature's state provides the following alternatives. "
 +     "When Enabled or Enabled with Drumbrake for Compatibility, sites can "
 +     "run WASM when JIT is disabled (via Drumbrake), sites with JIT allowed "
 +     "are unaffected. When Enabled without JIT optimizers, sites with JIT "
 +     "will run with worse performance in exchange for reduced security risk, "
-+     "sites without JIT are unaffected. When Enabled full JITless with "
-+     "Drumbrake, JIT is disallowed for all sites but when granting the JIT "
++     "sites without JIT are unaffected. When Enabled (full JITless with "
++     "Drumbrake), JIT is disallowed for all sites but when granting the JIT "
 +     "permission they are permitted to run WASM, sites not granted the JIT "
 +     "permission are not. This feature is provided by Trivalent."
-+     kOsAll, FEATURE_WITH_PARAMS_VALUE_TYPE(features::kJITMitigationFeature,
-+            kJITMitigationFeatureVariations, "JITMitigationBehavior")},
++     kOsAll, FEATURE_WITH_PARAMS_VALUE_TYPE(features::kJITMitigation,
++             kJITMitigationFeatureVariations, "JITMitigation")},
 +    {"show-punycode-domains", "Show punycode for IDN domains",
 +     "Shows punycode for IDN domains to mitigate IDN homograph attacks. "
 +     "Disabled by default. This feature is provided by Trivalent.",
