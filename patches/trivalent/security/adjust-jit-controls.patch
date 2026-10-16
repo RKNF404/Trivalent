@@ -90,7 +90,7 @@ index 22bf8ff115..3e1f9151b9 100644
    }
 
 +  const bool kJITMitigationFeatureStatus = base::FeatureList::IsEnabled(
-+                                        features::kJITMitigationSettings);
++                                        features::kJITMitigationFeature);
 +  const bool kDrumbrakeAvailablility =
 +#if V8_ENABLE_DRUMBRAKE
 +    kJITMitigationFeatureStatus;
@@ -132,14 +132,14 @@ index 499ba9f14a..7a722bbf74 100644
 
  // All features in alphabetical order.
 
-+BASE_FEATURE(kJITMitigationSettings, base::FEATURE_DISABLED_BY_DEFAULT);
++BASE_FEATURE(kJITMitigationFeature, base::FEATURE_DISABLED_BY_DEFAULT);
 +
 +const base::FeatureParam<bool> kEnableDrumbrakeCompat{
-+      &kJITMitigationSettings, "enable_drumbrake_compat", true};
++      &kJITMitigationFeature, "enable_drumbrake_compat", true};
 +const base::FeatureParam<bool> kDisableOptimizersDefault{
-+      &kJITMitigationSettings, "disable_optimizers_default", false};
++      &kJITMitigationFeature, "disable_optimizers_default", false};
 +const base::FeatureParam<bool> kFullJITlessWithDrumbrake{
-+      &kJITMitigationSettings, "full_jitless_with_drumbrake", false};
++      &kJITMitigationFeature, "full_jitless_with_drumbrake", false};
 +
  // Marks navigations as aborted when the NavigationHandle is destroyed mid
  // navigation, likely due to a tab closure. This is a kill switch.
@@ -161,7 +161,7 @@ index dbf055eaae..2be026c304 100644
  // BEFORE MODIFYING THIS FILE: If your feature is only used inside content/, add
  // your feature in `content/common/features.h` instead.
 
-+CONTENT_EXPORT BASE_DECLARE_FEATURE(kJITMitigationSettings);
++CONTENT_EXPORT BASE_DECLARE_FEATURE(kJITMitigationFeature);
 +
 +CONTENT_EXPORT extern const base::FeatureParam<bool>
 +    kEnableDrumbrakeCompat;
