@@ -21,7 +21,7 @@ index b0b6bb4005..8beb9a421e 100644
 +const FeatureEntry::FeatureParam kJITMitigation_EnableDrumbrakeCompat[] = {
 +                    {"enable_drumbrake_compat", "true"}};
 +const FeatureEntry::FeatureParam kJITMitigation_DisableOptimizersDefault[] = {
-+                    {"disable_optimizers_default", "true"}.
++                    {"disable_optimizers_default", "true"},
 +                    {"enable_drumbrake_compat", "false"}};
 +const FeatureEntry::FeatureParam kJITMitigation_FullJITlessWithDrumbrake[] = {
 +                    {"full_jitless_with_drumbrake", "true"},
