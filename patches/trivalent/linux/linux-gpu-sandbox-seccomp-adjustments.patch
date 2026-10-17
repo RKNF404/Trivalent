@@ -121,15 +121,3 @@ index 73bf31cb28..b198172a9d 100644
      if (IsArchitectureArm()) {
        return std::make_unique<CrosArmGpuProcessPolicy>(
            mremap_policy, base::CommandLine::ForCurrentProcess()->HasSwitch(
-diff --git a/sandbox/policy/linux/sandbox_seccomp_bpf_linux.h b/sandbox/policy/linux/sandbox_seccomp_bpf_linux.h
-index 7fe9953416..1b660058c4 100644
---- a/sandbox/policy/linux/sandbox_seccomp_bpf_linux.h
-+++ b/sandbox/policy/linux/sandbox_seccomp_bpf_linux.h
-@@ -32,6 +32,7 @@ class SANDBOX_POLICY_EXPORT SandboxSeccompBPF {
-     // Options for GPU's PreSandboxHook.
-     bool accelerated_video_decode_enabled = false;
-     bool accelerated_video_encode_enabled = false;
-+    std::string driver_version;
-   };
- 
-   SandboxSeccompBPF() = delete;
