@@ -73,7 +73,7 @@ index b0b6bb4005..8beb9a421e 100644
 +     "sites without JIT are unaffected. When Enabled (full JITless with "
 +     "Drumbrake), JIT is disallowed for all sites but when granting the JIT "
 +     "permission they are permitted to run WASM, sites not granted the JIT "
-+     "permission are not. This feature is provided by Trivalent."
++     "permission are not. This feature is provided by Trivalent.",
 +     kOsAll, FEATURE_WITH_PARAMS_VALUE_TYPE(features::kJITMitigation,
 +             kJITMitigationFeatureVariations, "JITMitigation")},
 +    {"show-punycode-domains", "Show punycode for IDN domains",
