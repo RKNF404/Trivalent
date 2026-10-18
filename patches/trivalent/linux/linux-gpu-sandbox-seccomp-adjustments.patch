@@ -50,33 +50,10 @@ index c4e4614eb8..8b2bf9aadf 100644
        return GpuProcessPolicy::EvaluateSyscall(sysno);
    }
 diff --git a/sandbox/policy/linux/bpf_gpu_policy_linux.cc b/sandbox/policy/linux/bpf_gpu_policy_linux.cc
-index 74333b96d1..9e91105c5d 100644
+index 74333b96d1..bad1c56fd8 100644
 --- a/sandbox/policy/linux/bpf_gpu_policy_linux.cc
 +++ b/sandbox/policy/linux/bpf_gpu_policy_linux.cc
-@@ -52,22 +52,7 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
-       return Error(ENOSYS);
- #if !BUILDFLAG(IS_CHROMEOS)
-     case __NR_fallocate:
--      return Allow();
- #endif  // BUILDFLAG(IS_CHROMEOS)
--    case __NR_fcntl: {
--      // The Nvidia driver uses flags not in the baseline policy
--      // fcntl(fd, F_ADD_SEALS, F_SEAL_SEAL | F_SEAL_SHRINK | F_SEAL_GROW)
--      // https://crbug.com/1128175
--      const Arg<unsigned int> cmd(1);
--      const Arg<unsigned long> arg(2);
--
--      const unsigned long kAllowedMask =
--          F_SEAL_SEAL | F_SEAL_SHRINK | F_SEAL_GROW;
--      BoolExpr add_seals =
--          AllOf(cmd == F_ADD_SEALS, (arg & ~kAllowedMask) == 0);
--
--      return If(add_seals, Allow()).Else(BPFBasePolicy::EvaluateSyscall(sysno));
--    }
-     case __NR_fdatasync:
-     case __NR_ftruncate:
- #if defined(__i386__) || defined(__arm__) || \
-@@ -80,19 +65,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
+@@ -80,19 +80,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
      case __NR_getdents64:
      case __NR_ioctl:
        return Allow();
@@ -96,7 +73,7 @@ index 74333b96d1..9e91105c5d 100644
      case __NR_mremap:
        if (mremap_policy_ == MremapPolicy::kAllow) {
          return RestrictMremapFlagsForODML();
-@@ -108,10 +80,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
+@@ -108,10 +95,6 @@ ResultExpr GpuProcessPolicy::EvaluateSyscall(int sysno) const {
        return RestrictSchedTarget(GetPolicyPid(), sysno);
      case __NR_prlimit64:
        return RestrictPrlimit64(GetPolicyPid());
