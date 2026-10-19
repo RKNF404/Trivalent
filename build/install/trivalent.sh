@@ -77,10 +77,15 @@ if [[ -d "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf.d" ]]; then
 fi
 
 # BROWSER_LOG_LEVEL=[0,1,2]
-declare -rix BROWSER_LOG_LEVEL="${BROWSER_LOG_LEVEL:-0}"
+declare BROWSER_LOG_LEVEL="${BROWSER_LOG_LEVEL:-0}"
+if [[ ! ${BROWSER_LOG_LEVEL} =~ ^[0-2]$ ]]; then
+  BROWSER_LOG_LEVEL=0
+  echo "BROWSER_LOG_LEVEL not valid, falling back to 0"
+fi
+declare -rix BROWSER_LOG_LEVEL
 
 function logecho () {
-  local -ri level=${1}
+  local -ri level="${1}"
   if [[ ${BROWSER_LOG_LEVEL} -ge ${level} ]]; then
     echo "${2}"
   fi
