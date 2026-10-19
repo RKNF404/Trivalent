@@ -14,11 +14,13 @@ diff --git a/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.c
 index 88e6b30e29..99ea7cc399 100644
 --- a/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc
 +++ b/sandbox/linux/seccomp-bpf-helpers/syscall_parameters_restrictions.cc
-@@ -324,6 +324,7 @@ ResultExpr RestrictFcntlCommands() {
+@@ -324,6 +324,9 @@ ResultExpr RestrictFcntlCommands() {
                F_SETLKW,
                F_GETLK,
                F_DUPFD,
++#if defined(__x86_64__)
 +              F_DUPFD_QUERY,
++#endif
                F_DUPFD_CLOEXEC},
               Allow())
        .Case(F_SETFL,
