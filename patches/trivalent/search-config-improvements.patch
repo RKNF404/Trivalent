@@ -14,6 +14,15 @@ diff --git a/third_party/search_engines_data/resources/definitions/prepopulated_
 index 88df150..2aba66d 100644
 --- a/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
 +++ b/third_party/search_engines_data/resources/definitions/prepopulated_engines.json
+@@ -22,7 +22,7 @@
+     // use a lower number. This number is used by UMA stats and must be updated
+     // to include the full range or else not all engines will be counted in
+     // stats.
+-    "kMaxPrepopulatedEngineID": 117,
++    "kMaxPrepopulatedEngineID": 118,
+
+     // Increment this if you change the data in ways that mean users with
+     // existing data should get a new version. Otherwise, existing data may
 @@ -177,15 +177,13 @@
        "keyword": "google.com",
        "favicon_url": "https://www.google.com/images/branding/product/ico/googleg_alldp.ico",
