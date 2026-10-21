@@ -17,8 +17,8 @@ Cr-Commit-Position: refs/heads/main@{#110186}
 
 diff --git a/v8/src/debug/debug-wasm-objects.cc b/v8/src/debug/debug-wasm-objects.cc
 index 0cf893b6c41..812c7e50bcf 100644
---- a/src/debug/debug-wasm-objects.cc
-+++ b/src/debug/debug-wasm-objects.cc
+--- a/v8/src/debug/debug-wasm-objects.cc
++++ b/v8/src/debug/debug-wasm-objects.cc
 @@ -798,6 +798,8 @@ class DebugWasmInterpreterScopeIterator final : public debug::ScopeIterator {
 
    ScopeType GetType() override { return type_; }
