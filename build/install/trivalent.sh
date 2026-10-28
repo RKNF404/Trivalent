@@ -106,16 +106,20 @@ declare -r CHROMIUM_ALL_FLAGS="${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"
 
 # Filter out commandline arguments that aren't safe
 declare cmdargs=""
-for arg in ${@}; do
-  declare argNoPrefix="${arg:2}"
-  # Don't filter non-arguments (like URLs and such)
-  if [[ "${arg:0:2}" == "--" && "${ALLOW_UNSAFE_FLAGS}" != "true" ]]; then
-    if ! [[ "${argNoPrefix%=*}" =~ ^(profile-directory|restart|guest|incognito|restore-last-session|new-window|app-id|app|uninstall-app-id|enable-logging|log-level|log-file)$ ]]; then
-      continue
+if [[ "${ALLOW_UNSAFE_FLAGS}" == "false" ]]; then
+  for arg in ${@}; do
+    declare argNoPrefix="${arg:2}"
+    # Don't filter non-arguments (like URLs and such)
+    if [[ "${arg:0:2}" == "--" ]]; then
+      if ! [[ "${argNoPrefix%=*}" =~ ^(profile-directory|restart|guest|incognito|restore-last-session|new-window|app-id|app|uninstall-app-id|enable-logging|log-level|log-file)$ ]]; then
+        continue
+      fi
     fi
-  fi
-  cmdargs+=("${arg}")
-done
+    cmdargs+=("${arg}")
+  done
+elif [[ "${ALLOW_UNSAFE_FLAGS}" == "true" ]]; then
+  cmdargs="${@}"
+fi
 
 # desktop integration
 declare -r xdg_app_dir="${XDG_DATA_HOME:-"${HOME}/.local/share/applications"}"
