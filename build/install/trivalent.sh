@@ -96,17 +96,13 @@ function logecho () {
 
 # obtain chromium flags from system file
 # shellcheck source=build/trivalent.conf
-declare CHROMIUM_SYSTEM_FLAGS=()
+declare CHROMIUM_SYSTEM_FLAGS=""
 if [[ -f "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf" ]]; then
   # shellcheck disable=SC1091,SC1090
   source "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf"
 fi
 
-declare CHROMIUM_ALL_FLAGS=()
-for flag in "${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"; do
-  CHROMIUM_ALL_FLAGS+="${flag}"
-done
-declare -r CHROMIUM_ALL_FLAGS
+declare -r CHROMIUM_ALL_FLAGS="${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"
 
 # Filter out commandline arguments that aren't safe
 declare CMD_ARGS=()
@@ -159,4 +155,4 @@ exec > >(exec cat)
 exec 2> >(exec cat >&2)
 
 # shellcheck disable=SC2086
-exec bwrap "${BWRAP_ARGS[@]}" -- "${HERE}/${CHROMIUM_NAME}" "${CHROMIUM_ALL_FLAGS[@]}" "${CMD_ARGS[@]}"
+exec bwrap "${BWRAP_ARGS[@]}" -- "${HERE}/${CHROMIUM_NAME}" ${CHROMIUM_ALL_FLAGS} "${CMD_ARGS[@]}"
