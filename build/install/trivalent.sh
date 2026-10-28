@@ -96,30 +96,35 @@ function logecho () {
 
 # obtain chromium flags from system file
 # shellcheck source=build/trivalent.conf
-declare CHROMIUM_SYSTEM_FLAGS=""
+declare CHROMIUM_SYSTEM_FLAGS=()
 if [[ -f "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf" ]]; then
   # shellcheck disable=SC1091,SC1090
   source "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf"
 fi
 
-declare -r CHROMIUM_ALL_FLAGS="${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"
+declare CHROMIUM_ALL_FLAGS=()
+for flag in "${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"; do
+  CHROMIUM_ALL_FLAGS+="${flag}"
+done
+declare -r CHROMIUM_ALL_FLAGS
 
 # Filter out commandline arguments that aren't safe
-declare cmdargs=""
+declare CMD_ARGS=()
 if [[ "${ALLOW_UNSAFE_FLAGS}" == "false" ]]; then
-  for arg in ${@}; do
+  for arg in "$@"; do
     declare argNoPrefix="${arg:2}"
     # Don't filter non-arguments (like URLs and such)
     if [[ "${arg:0:2}" == "--" ]]; then
-      if ! [[ "${argNoPrefix%=*}" =~ ^(profile-directory|restart|guest|incognito|restore-last-session|new-window|app-id|app|uninstall-app-id|enable-logging|log-level|log-file)$ ]]; then
+      if ! [[ "${argNoPrefix%=*}" =~ ^(profile-directory|restart|guest|incognito|restore-last-session|new-window|a>
         continue
       fi
     fi
-    cmdargs+=("${arg}")
+    CMD_ARGS+=("${arg}")
   done
 elif [[ "${ALLOW_UNSAFE_FLAGS}" == "true" ]]; then
-  cmdargs="${@}"
+  CMD_ARGS=("${@}")
 fi
+declare -r CMD_ARGS
 
 # desktop integration
 declare -r xdg_app_dir="${XDG_DATA_HOME:-"${HOME}/.local/share/applications"}"
@@ -154,4 +159,4 @@ exec > >(exec cat)
 exec 2> >(exec cat >&2)
 
 # shellcheck disable=SC2086
-exec bwrap "${BWRAP_ARGS[@]}" -- "${HERE}/${CHROMIUM_NAME}" ${CHROMIUM_ALL_FLAGS} "${cmdargs}"
+exec bwrap "${BWRAP_ARGS[@]}" -- "${HERE}/${CHROMIUM_NAME}" "${CHROMIUM_ALL_FLAGS[@]}" "${CMD_ARGS[@]}"
