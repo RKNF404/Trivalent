@@ -101,6 +101,17 @@ fi
 
 declare -r CHROMIUM_ALL_FLAGS="${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"
 
+declare cmdargs=""
+for arg in $@; do
+  declare argNoPrefix="${arg:2}"
+  if [[ "${arg:0:2}" == "--" ]]; then
+    if ! [[ "${argNoPrefix%=*}" =~ ^(profile-directory|restart|guest|incognito|restore-last-session|new-window|app-id|app|uninstall-app-id|enable-logging|log-level|log-file)$ ]]; then
+      continue
+    fi
+  fi
+  cmdargs+=("${arg}")
+done
+
 # desktop integration
 declare -r xdg_app_dir="${XDG_DATA_HOME:-"${HOME}/.local/share/applications"}"
 mkdir -p "${xdg_app_dir}"
@@ -134,4 +145,4 @@ exec > >(exec cat)
 exec 2> >(exec cat >&2)
 
 # shellcheck disable=SC2086
-exec bwrap "${BWRAP_ARGS[@]}" -- "${HERE}/${CHROMIUM_NAME}" ${CHROMIUM_ALL_FLAGS} "${@}"
+exec bwrap "${BWRAP_ARGS[@]}" -- "${HERE}/${CHROMIUM_NAME}" ${CHROMIUM_ALL_FLAGS} "${cmdargs}"
