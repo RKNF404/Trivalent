@@ -68,6 +68,9 @@ declare USE_WAYLAND="${USE_WAYLAND:-}"
 declare FEATURES=""
 declare CHROMIUM_FLAGS=""
 
+# ALLOW_UNSAFE_FLAGS=[true|false]
+declare ALLOW_UNSAFE_FLAGS="false"
+
 # obtain extra flags that are likely user-configured
 if [[ -d "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf.d" ]]; then
   for conf_file in "/etc/${CHROMIUM_NAME}/${CHROMIUM_NAME}.conf.d"/*.conf; do
@@ -101,10 +104,12 @@ fi
 
 declare -r CHROMIUM_ALL_FLAGS="${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"
 
+# Filter out commandline arguments that aren't safe
 declare cmdargs=""
-for arg in $@; do
+for arg in ${@}; do
   declare argNoPrefix="${arg:2}"
-  if [[ "${arg:0:2}" == "--" ]]; then
+  # Don't filter non-arguments (like URLs and such)
+  if [[ "${arg:0:2}" == "--" && "${ALLOW_UNSAFE_FLAGS}" != "true" ]]; then
     if ! [[ "${argNoPrefix%=*}" =~ ^(profile-directory|restart|guest|incognito|restore-last-session|new-window|app-id|app|uninstall-app-id|enable-logging|log-level|log-file)$ ]]; then
       continue
     fi
