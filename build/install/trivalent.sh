@@ -107,7 +107,7 @@ declare -r CHROMIUM_ALL_FLAGS="${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"
 
 # Filter out commandline arguments that aren't safe
 declare CMD_ARGS=()
-if [[ "${ALLOW_UNSAFE_FLAGS}" == "false" ]]; then
+if [[ "${ALLOW_UNSAFE_FLAGS}" != "true" ]]; then
   declare Allowlist="version|restart|ozone-platform|disable-gpu" # Misc flags
   declare Allowlist+="|profile-directory|user-data-dir|disk-cache-dir|disk-cache-size" # Directory and cache flags
   declare Allowlist+="|guest|incognito|restore-last-session|new-window|class" # Session and window flags
@@ -123,7 +123,7 @@ if [[ "${ALLOW_UNSAFE_FLAGS}" == "false" ]]; then
     fi
     CMD_ARGS+=("${arg}")
   done
-elif [[ "${ALLOW_UNSAFE_FLAGS}" == "true" ]]; then
+else
   CMD_ARGS=("${@}")
 fi
 declare -r CMD_ARGS
