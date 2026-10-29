@@ -110,9 +110,9 @@ declare CMD_ARGS=()
 if [[ "${ALLOW_UNSAFE_FLAGS}" == "false" ]]; then
   declare Allowlist="version|restart|ozone-platform|disable-gpu" # Misc flags
   declare Allowlist+="|profile-directory|user-data-dir|disk-cache-dir|disk-cache-size" # Directory and cache flags
-  declare Allowlist+="|guest|incognito|new-window|restore-last-session" # Session and window flags
+  declare Allowlist+="|guest|incognito|restore-last-session|new-window|class" # Session and window flags
   declare Allowlist+="|enable-logging|log-level|log-file" # Loggings flags
-  declare Allowlist+="|app-id|app|uninstall-app-id" # PWA flags
+  declare Allowlist+="|app-id|app|uninstall-app-id|app-launch-url-for-shortcuts-menu-item" # PWA flags
   declare -r Allowlist
   for arg in "$@"; do
     declare argNoPrefix="${arg:2}"
