@@ -108,13 +108,18 @@ declare -r CHROMIUM_ALL_FLAGS="${CHROMIUM_FLAGS} ${CHROMIUM_SYSTEM_FLAGS}"
 # Filter out commandline arguments that aren't safe
 declare CMD_ARGS=()
 if [[ "${ALLOW_UNSAFE_FLAGS}" == "false" ]]; then
+  declare Allowlist="version|restart|ozone-platform|disable-gpu" # Misc flags
+  declare Allowlist+="|profile-directory|user-data-dir|disk-cache-dir|disk-cache-size" # Directory and cache flags
+  declare Allowlist+="|guest|incognito|new-window|restore-last-session" # Session and window flags
+  declare Allowlist+="|enable-logging|log-level|log-file" # Loggings flags
+  declare Allowlist+="|app-id|app|uninstall-app-id" # PWA flags
+  declare -r Allowlist
   for arg in "$@"; do
     declare argNoPrefix="${arg:2}"
     # Don't filter non-arguments (like URLs and such)
-    if [[ "${arg:0:2}" == "--" ]]; then
-      if ! [[ "${argNoPrefix%=*}" =~ ^(version|profile-directory|restart|guest|incognito|restore-last-session|new-window|app-id|app|uninstall-app-id|enable-logging|log-level|log-file)$ ]]; then
-        continue
-      fi
+    if ! [[ "${arg:0:1}" == "-" && "${argNoPrefix%=${argNoPrefix#*=}" =~ ^(${Allowlist})$ ]]; then
+      logecho 1 "Filtering out unsafe flag: ${arg}"
+      continue
     fi
     CMD_ARGS+=("${arg}")
   done
