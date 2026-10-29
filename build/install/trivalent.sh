@@ -111,7 +111,7 @@ if [[ "${ALLOW_UNSAFE_FLAGS}" == "false" ]]; then
     declare argNoPrefix="${arg:2}"
     # Don't filter non-arguments (like URLs and such)
     if [[ "${arg:0:2}" == "--" ]]; then
-      if ! [[ "${argNoPrefix%=*}" =~ ^(profile-directory|restart|guest|incognito|restore-last-session|new-window|app-id|app|uninstall-app-id|enable-logging|log-level|log-file)$ ]]; then
+      if ! [[ "${argNoPrefix%=*}" =~ ^(version|profile-directory|restart|guest|incognito|restore-last-session|new-window|app-id|app|uninstall-app-id|enable-logging|log-level|log-file)$ ]]; then
         continue
       fi
     fi
