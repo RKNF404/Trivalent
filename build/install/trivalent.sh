@@ -117,7 +117,7 @@ if [[ "${ALLOW_UNSAFE_FLAGS}" == "false" ]]; then
   for arg in "$@"; do
     declare argNoPrefix="${arg:2}"
     # Don't filter non-arguments (like URLs and such)
-    if ! [[ "${arg:0:1}" == "-" && "${argNoPrefix%="${argNoPrefix#*=}"}" =~ ^(${Allowlist})$ ]]; then
+    if ! [[ "${arg:0:1}" != "-" || "${argNoPrefix%="${argNoPrefix#*=}"}" =~ ^(${Allowlist})$ ]]; then
       logecho 1 "Filtering out unsafe flag: ${arg}"
       continue
     fi
