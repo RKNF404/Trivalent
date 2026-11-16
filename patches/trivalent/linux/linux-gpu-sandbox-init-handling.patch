@@ -10,18 +10,6 @@ Unless required by applicable law or agreed to in writing, software distributed 
 distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and limitations under the License.
 ---
-diff --git a/content/gpu/gpu_main.cc b/content/gpu/gpu_main.cc
-index 4dafd53f61..ecb30836c1 100644
---- a/content/gpu/gpu_main.cc
-+++ b/content/gpu/gpu_main.cc
-@@ -544,6 +544,7 @@ bool StartSandboxLinux(gpu::GpuWatchdogThread* watchdog_thread,
-       else if (angle::IsNVIDIA(gpu.vendor_id))
-         sandbox_options.use_nvidia_specific_policies = true;
-     }
-+    sandbox_options.driver_version = gpu_prefs.gallium_version;
-   }
-   sandbox_options.accelerated_video_decode_enabled =
-       !gpu_prefs.disable_accelerated_video_decode;
 diff --git a/content/public/browser/gpu_utils.cc b/content/public/browser/gpu_utils.cc
 index e263d95cc3..8359e1440d 100644
 --- a/content/public/browser/gpu_utils.cc
