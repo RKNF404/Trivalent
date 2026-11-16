@@ -41,6 +41,7 @@ index f5b84ca097..841252536d 100644
 -#endif
 
  BASE_FEATURE(kGpuPersistentCacheMetadata, base::FEATURE_DISABLED_BY_DEFAULT);
+ 
 diff --git a/media/base/media_switches.cc b/media/base/media_switches.cc
 index 9c038651f1..3f37ab7177 100644
 --- a/media/base/media_switches.cc
