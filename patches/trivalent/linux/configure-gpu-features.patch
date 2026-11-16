@@ -11,10 +11,17 @@ distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, e
 See the License for the specific language governing permissions and limitations under the License.
 ---
 diff --git a/gpu/config/gpu_finch_features.cc b/gpu/config/gpu_finch_features.cc
-index f8295e568d..b8c04bfaba 100644
+index f5b84ca097..841252536d 100644
 --- a/gpu/config/gpu_finch_features.cc
 +++ b/gpu/config/gpu_finch_features.cc
-@@ -243,7 +243,7 @@ BASE_FEATURE(kClearGrShaderDiskCacheOnInvalidPrefix,
+@@ -246,13 +246,13 @@ BASE_FEATURE(kClearGrShaderDiskCacheOnInvalidPrefix,
+
+ // When enabled, the GPU process initializes through GpuInit2. GpuInit2 is where
+ // GPU startup optimizations are being developed.
+-BASE_FEATURE(kGpuInitOptimization, base::FEATURE_DISABLED_BY_DEFAULT);
++BASE_FEATURE(kGpuInitOptimization, base::FEATURE_ENABLED_BY_DEFAULT);
+
+ // When enabled, Chrome will use the shader disk cache. This feature provides a
  // kill-switch for working around issues with the disk cache and assessing the
  // performance value of the disk cache. The --disable-gpu-shader-disk-cache flag
  // overrides this feature and forces the disk cache to be disabled.
@@ -23,7 +30,7 @@ index f8295e568d..b8c04bfaba 100644
 
  bool IsShaderDiskCacheEnabled(const base::CommandLine* command_line) {
    if (command_line->HasSwitch(switches::kDisableGpuShaderDiskCache)) {
-@@ -471,11 +471,7 @@ const base::FeatureParam<int> kSkiaGraphiteMinPathSizeForMsaa{
+@@ -477,11 +477,7 @@ const base::FeatureParam<int> kSkiaGraphiteMinPathSizeForMsaa{
  // Usage for Graphite is controlled independently with
  // kSkiaGraphiteDawnUsePersistentCache.
  BASE_FEATURE(kGpuPersistentCache,
@@ -34,7 +41,6 @@ index f8295e568d..b8c04bfaba 100644
 -#endif
 
  BASE_FEATURE(kGpuPersistentCacheMetadata, base::FEATURE_DISABLED_BY_DEFAULT);
-
 diff --git a/media/base/media_switches.cc b/media/base/media_switches.cc
 index 9c038651f1..3f37ab7177 100644
 --- a/media/base/media_switches.cc
