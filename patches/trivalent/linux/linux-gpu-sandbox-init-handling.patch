@@ -1,0 +1,127 @@
+Copyright 2026 The Trivalent Authors
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is
+distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.
+---
+diff --git a/content/gpu/gpu_main.cc b/content/gpu/gpu_main.cc
+index 4dafd53f61..ecb30836c1 100644
+--- a/content/gpu/gpu_main.cc
++++ b/content/gpu/gpu_main.cc
+@@ -544,6 +544,7 @@ bool StartSandboxLinux(gpu::GpuWatchdogThread* watchdog_thread,
+       else if (angle::IsNVIDIA(gpu.vendor_id))
+         sandbox_options.use_nvidia_specific_policies = true;
+     }
++    sandbox_options.driver_version = gpu_prefs.gallium_version;
+   }
+   sandbox_options.accelerated_video_decode_enabled =
+       !gpu_prefs.disable_accelerated_video_decode;
+diff --git a/content/public/browser/gpu_utils.cc b/content/public/browser/gpu_utils.cc
+index e263d95cc3..8359e1440d 100644
+--- a/content/public/browser/gpu_utils.cc
++++ b/content/public/browser/gpu_utils.cc
+@@ -30,6 +30,10 @@
+ #include "ui/gfx/switches.h"
+ #include "ui/gl/gl_features.h"
+ 
++#if BUILDFLAG(IS_LINUX)
++#include "third_party/re2/src/re2/re2.h"
++#endif
++
+ namespace {
+ 
+ void KillGpuProcessImpl(content::GpuProcessHost* host) {
+@@ -83,6 +87,23 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
+   gpu_preferences.gpu_sandbox_start_early =
+       command_line->HasSwitch(switches::kGpuSandboxStartEarly);
+ 
++  gpu_preferences.gpu_sandbox_linux =
++#if BUILDFLAG(IS_LINUX)
++      !command_line->HasSwitch("disable-gpu-sandbox-linux");
++#else
++      false;
++#endif
++
++#if BUILDFLAG(IS_LINUX)
++  if (command_line->HasSwitch("libgallium-version")) {
++    const std::string libgalliumVersion =
++          command_line->GetSwitchValueASCII("libgallium-version");
++    // We may receive untrusted input, so validate it matches a version format
++    if (RE2::FullMatch(libgalliumVersion, "[1-9][0-9]+\\.[0-9]\\.[0-9]"))
++      gpu_preferences.gallium_version = libgalliumVersion;
++  }
++#endif
++
+   gpu_preferences.enable_vulkan_protected_memory =
+       command_line->HasSwitch(switches::kEnableVulkanProtectedMemory);
+   gpu_preferences.disable_vulkan_fallback_to_gl_for_testing =
+diff --git a/gpu/ipc/service/gpu_init_2.cc b/gpu/ipc/service/gpu_init_2.cc
+index 235a54fbf9..374fdbde47 100644
+--- a/gpu/ipc/service/gpu_init_2.cc
++++ b/gpu/ipc/service/gpu_init_2.cc
+@@ -59,6 +59,10 @@
+ #include "ui/ozone/public/ozone_switches.h"
+ #endif
+
++#if BUILDFLAG(IS_LINUX)
++#include "third_party/angle/src/gpu_info_util/SystemInfo.h"
++#endif
++
+ #if BUILDFLAG(IS_WIN)
+ #include "gpu/ipc/service/gpu_init_win.h"
+ #include "ui/gl/direct_composition_support.h"
+@@ -89,6 +93,14 @@
+ #include "third_party/dawn/include/dawn/webgpu_cpp.h"  // nogncheck
+ #endif
+
++// TODO: Add the following
++//angle::IsNVIDIA(vendor_id)
++//angle::IsVirtIO(vendor_id)
++//angle::IsARM(vendor_id)
++bool IsGpuSandboxSupportedPlatform(uint32_t vendor_id) {
++  return angle::IsAMD(vendor_id) || angle::IsIntel(vendor_id);
++}
++
+ namespace gpu {
+
+ namespace {
+@@ -749,7 +761,23 @@ void GpuInit2::MaybeFallbackToSwiftShaderEarly(InitState& state) {
+
+ void GpuInit2::StartWatchdogAndMaybeSandboxEarly(InitState& state) {
+ #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
+-  bool gpu_sandbox_start_early = gpu_preferences_.gpu_sandbox_start_early;
++  // Only enable on platforms where the sandbox works
++  bool gpu_sandbox_linux = gpu_preferences_.gpu_sandbox_linux &&
++      !gpu_preferences_.gallium_version.empty() &&
++      IsGpuSandboxSupportedPlatform(gpu_info_.active_gpu().vendor_id) &&
++      // The sandbox does not currently work with Vulkan or x11
++      !features::IsUsingVulkan() &&
++      ui::OzonePlatform::RunningOnWaylandForTest();
++  if (gpu_sandbox_linux) {
++    for (const auto& gpu : gpu_info_.secondary_gpus) {
++      if (!IsGpuSandboxSupportedPlatform(gpu.vendor_id)) {
++        gpu_sandbox_linux = false;
++        break;
++      }
++    }
++  }
++  bool gpu_sandbox_start_early = gpu_preferences_.gpu_sandbox_start_early ||
++                                 gpu_sandbox_linux;
+ #else   // !(BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS))
+   // For some reasons MacOSX's VideoToolbox might crash when called after
+   // initializing GL, see crbug.com/1047643 and crbug.com/871280. On other
+@@ -778,7 +806,7 @@ void GpuInit2::StartWatchdogAndMaybeSandboxEarly(InitState& state) {
+   // On Chrome OS ARM Mali, GPU driver userspace creates threads when
+   // initializing a GL context, so start the sandbox early.
+   // TODO(zmo): Need to collect OS version before this.
+-  if (gpu_preferences_.gpu_sandbox_start_early) {
++  if (gpu_sandbox_start_early) {
+     StartSandbox(state);
+   }
+ #endif  // BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
