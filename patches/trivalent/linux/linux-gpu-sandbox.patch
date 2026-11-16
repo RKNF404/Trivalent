@@ -364,7 +364,20 @@ index 841774d3e5..2c7225e9a6 100644
 +
    // Enables using CODECAPI_AVLowLatencyMode. Windows only.
    bool enable_low_latency_dxva = true;
- 
+
+
+diff --git a/content/gpu/gpu_main.cc b/content/gpu/gpu_main.cc
+index 4dafd53f61..ecb30836c1 100644
+--- a/content/gpu/gpu_main.cc
++++ b/content/gpu/gpu_main.cc
+@@ -544,6 +544,7 @@ bool StartSandboxLinux(gpu::GpuWatchdogThread* watchdog_thread,
+       else if (angle::IsNVIDIA(gpu.vendor_id))
+         sandbox_options.use_nvidia_specific_policies = true;
+     }
++    sandbox_options.driver_version = gpu_prefs.gallium_version;
+   }
+   sandbox_options.accelerated_video_decode_enabled =
+       !gpu_prefs.disable_accelerated_video_decode;
 diff --git a/gpu/ipc/common/gpu_preferences.mojom b/gpu/ipc/common/gpu_preferences.mojom
 index 836385e6ff..4e678dc0ad 100644
 --- a/gpu/ipc/common/gpu_preferences.mojom
