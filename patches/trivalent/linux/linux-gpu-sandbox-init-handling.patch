@@ -25,7 +25,7 @@ index e263d95cc3..8359e1440d 100644
  namespace {
  
  void KillGpuProcessImpl(content::GpuProcessHost* host) {
-@@ -83,6 +87,25 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
+@@ -83,6 +87,26 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
    gpu_preferences.gpu_sandbox_start_early =
        command_line->HasSwitch(switches::kGpuSandboxStartEarly);
  
