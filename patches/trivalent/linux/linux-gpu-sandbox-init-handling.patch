@@ -82,7 +82,7 @@ index 235a54fbf9..374fdbde47 100644
  namespace gpu {
 
  namespace {
-@@ -749,7 +761,23 @@ void GpuInit2::MaybeFallbackToSwiftShaderEarly(InitState& state) {
+@@ -749,7 +761,22 @@ void GpuInit2::MaybeFallbackToSwiftShaderEarly(InitState& state) {
 
  void GpuInit2::StartWatchdogAndMaybeSandboxEarly(InitState& state) {
  #if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS)
@@ -92,7 +92,7 @@ index 235a54fbf9..374fdbde47 100644
 +      !gpu_preferences_.gallium_version.empty() &&
 +      IsGpuSandboxSupportedPlatform(gpu_info_.active_gpu().vendor_id) &&
 +      // The sandbox does not currently work with Vulkan
-+      !features::IsUsingVulkan();;
++      !features::IsUsingVulkan();
 +  if (gpu_sandbox_linux) {
 +    for (const auto& gpu : gpu_info_.secondary_gpus) {
 +      if (!IsGpuSandboxSupportedPlatform(gpu.vendor_id)) {
@@ -106,7 +106,7 @@ index 235a54fbf9..374fdbde47 100644
  #else   // !(BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_CHROMEOS))
    // For some reasons MacOSX's VideoToolbox might crash when called after
    // initializing GL, see crbug.com/1047643 and crbug.com/871280. On other
-@@ -778,7 +806,7 @@ void GpuInit2::StartWatchdogAndMaybeSandboxEarly(InitState& state) {
+@@ -778,7 +805,7 @@ void GpuInit2::StartWatchdogAndMaybeSandboxEarly(InitState& state) {
    // On Chrome OS ARM Mali, GPU driver userspace creates threads when
    // initializing a GL context, so start the sandbox early.
    // TODO(zmo): Need to collect OS version before this.
