@@ -25,13 +25,15 @@ index e263d95cc3..8359e1440d 100644
  namespace {
  
  void KillGpuProcessImpl(content::GpuProcessHost* host) {
-@@ -83,6 +87,23 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
+@@ -83,6 +87,25 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
    gpu_preferences.gpu_sandbox_start_early =
        command_line->HasSwitch(switches::kGpuSandboxStartEarly);
  
 +  gpu_preferences.gpu_sandbox_linux =
 +#if BUILDFLAG(IS_LINUX)
-+      !command_line->HasSwitch("disable-gpu-sandbox-linux");
++      !command_line->HasSwitch("disable-gpu-sandbox-linux") &&
++      command_line->HasSwitch("ozone-platform") &&
++      command_line->GetSwitchValueASCII("ozone-platform") == "wayland";
 +#else
 +      false;
 +#endif
